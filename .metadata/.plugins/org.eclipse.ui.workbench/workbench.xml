@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<workbench progressCount="12" version="2.0">
+<workbenchAdvisor/>
+<window height="717" width="1022" x="38" y="43">
+<fastViewData fastViewLocation="1024"/>
+<perspectiveBar>
+<itemSize x="160"/>
+</perspectiveBar>
+<coolbarLayout locked="0">
+<coolItem id="group.file" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.file" itemType="typeToolBarContribution" x="270" y="32"/>
+<coolItem id="additions" itemType="typeGroupMarker"/>
+<coolItem id="com.rsi.idldt.ui.edit" itemType="typeToolBarContribution" x="154" y="32"/>
+<coolItem id="org.eclipse.debug.ui.launchActionSet" itemType="typeToolBarContribution" x="84" y="32"/>
+<coolItem id="org.eclipse.search.searchActionSet" itemType="typeToolBarContribution" x="40" y="32"/>
+<coolItem id="group.nav" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.navigate" itemType="typeToolBarContribution" x="184" y="32"/>
+<coolItem id="group.editor" itemType="typeGroupMarker"/>
+<coolItem id="com.rsi.idldt.proeditor.ProEditor" itemType="typePlaceholder" x="40" y="32"/>
+<coolItem id="group.help" itemType="typeGroupMarker"/>
+<coolItem id="org.eclipse.ui.workbench.help" itemType="typeToolBarContribution" x="-1" y="-1"/>
+</coolbarLayout>
+<page focus="true" label="Workspace - Debug">
+<editors>
+<editorArea activeWorkbook="DefaultEditorWorkbook">
+<info part="DefaultEditorWorkbook">
+<folder appearance="1" expanded="2">
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33"/>
+</folder>
+</info>
+</editorArea>
+</editors>
+<views>
+<view id="org.eclipse.ui.views.TaskList" partName="Tasks">
+<viewState columnWidth0="40" columnWidth1="16" columnWidth2="250" columnWidth3="75" columnWidth4="150" columnWidth5="60" columnWidth6="0" horizontalPosition="0" verticalPosition="0">
+<columnOrder columnOrderIndex="0"/>
+<columnOrder columnOrderIndex="1"/>
+<columnOrder columnOrderIndex="2"/>
+<columnOrder columnOrderIndex="3"/>
+<columnOrder columnOrderIndex="4"/>
+<columnOrder columnOrderIndex="5"/>
+<columnOrder columnOrderIndex="6"/>
+</viewState>
+</view>
+<view id="com.rsi.idldt.ui.views.CommandLineView" partName="Command Line">
+<viewState/>
+</view>
+<view id="org.eclipse.ui.views.ContentOutline" partName="Outline">
+<viewState/>
+</view>
+<view id="org.eclipse.debug.ui.VariableView" partName="Variables">
+<viewState/>
+</view>
+<view id="org.eclipse.ui.console.ConsoleView" partName="Console">
+<viewState/>
+</view>
+<view id="org.eclipse.debug.ui.DebugView" partName="Debug">
+<viewState/>
+</view>
+<view id="com.rsi.idldt.ui.views.ProfilerView" partName="Profiler">
+<viewState/>
+</view>
+<view id="org.eclipse.ui.navigator.ProjectExplorer" partName="Project Explorer">
+<viewState CommonNavigator.LINKING_ENABLED="0" org.eclipse.ui.navigator.resources.workingSets.showTopLevelWorkingSets="0"/>
+</view>
+<view id="org.eclipse.debug.ui.BreakpointView" partName="Breakpoints">
+<viewState>
+<isTrackingSelection value="false"/>
+</viewState>
+</view>
+<view id="com.rsi.idldt.ui.views.CommandHistoryView" partName="Command History">
+<viewState columnWidth0="200" grp200="0" grp206="1" showTreeView="1" sortColumn="1" sortDirection="128"/>
+</view>
+<view id="org.eclipse.ui.views.ProblemView" partName="Problems">
+<viewState columnWidth0="250" columnWidth1="75" columnWidth2="150" columnWidth3="60" columnWidth4="0" horizontalPosition="0" verticalPosition="0">
+<columnOrder columnOrderIndex="0"/>
+<columnOrder columnOrderIndex="1"/>
+<columnOrder columnOrderIndex="2"/>
+<columnOrder columnOrderIndex="3"/>
+<columnOrder columnOrderIndex="4"/>
+</viewState>
+</view>
+</views>
+<perspectives activePart="org.eclipse.debug.ui.DebugView" activePerspective="org.eclipse.debug.ui.DebugPerspective">
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="org.eclipse.debug.internal.ui.DebugPerspectiveFactory" id="org.eclipse.debug.ui.DebugPerspective" label="Debug"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.WorkingSetActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="org.eclipse.update.ui.softwareUpdates"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.CmdLine"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.File"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.Run"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.Wizard"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.Help"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.launchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.NavigateActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.debugActionSet"/>
+<show_view_action id="org.eclipse.debug.ui.DebugView"/>
+<show_view_action id="org.eclipse.debug.ui.VariableView"/>
+<show_view_action id="org.eclipse.debug.ui.BreakpointView"/>
+<show_view_action id="org.eclipse.debug.ui.ExpressionView"/>
+<show_view_action id="org.eclipse.ui.views.ContentOutline"/>
+<show_view_action id="org.eclipse.ui.console.ConsoleView"/>
+<show_view_action id="org.eclipse.ui.views.TaskList"/>
+<show_view_action id="com.rsi.idldt.ui.views.CommandLineView"/>
+<show_view_action id="com.rsi.idldt.ui.views.CommandHistoryView"/>
+<show_view_action id="com.rsi.idldt.ui.views.ProfilerView"/>
+<new_wizard_action id="com.rsi.idldt.core.ui.newProjectWizard"/>
+<new_wizard_action id="com.rsi.idldt.core.ui.newUntitledProWizard"/>
+<new_wizard_action id="org.eclipse.ui.wizards.new.folder"/>
+<perspective_action id="com.rsi.idldt.ui.IDLPerspective"/>
+<view id="org.eclipse.debug.ui.DebugView"/>
+<view id="org.eclipse.debug.ui.VariableView"/>
+<view id="org.eclipse.debug.ui.BreakpointView"/>
+<view id="com.rsi.idldt.ui.views.CommandLineView"/>
+<view id="org.eclipse.ui.views.ContentOutline"/>
+<view id="org.eclipse.ui.console.ConsoleView"/>
+<view id="org.eclipse.ui.views.TaskList"/>
+<view id="com.rsi.idldt.ui.views.ProfilerView"/>
+<fastViewBars/>
+<viewLayoutRec id="com.rsi.idldt.ui.views.CommandLineView" showTitle="true" standalone="true"/>
+<layout>
+<mainWindow>
+<info folder="true" part="org.eclipse.debug.internal.ui.NavigatorFolderView">
+<folder activePageID="org.eclipse.debug.ui.DebugView" appearance="2" expanded="2">
+<page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
+<page content="org.eclipse.ui.views.ResourceNavigator" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="stickyFolderRight" ratio="0.7495049" ratioLeft="757" ratioRight="253" relationship="2" relative="org.eclipse.debug.internal.ui.NavigatorFolderView">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@106433d" ratio="0.7051724" ratioLeft="409" ratioRight="171" relationship="4" relative="org.eclipse.debug.internal.ui.NavigatorFolderView">
+<folder activePageID="com.rsi.idldt.ui.views.CommandLineView" appearance="3" expanded="2">
+<page content="com.rsi.idldt.ui.views.CommandLineView" label="Command Line"/>
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info part="org.eclipse.ui.views.BookmarkView" ratio="0.5" ratioLeft="505" ratioRight="505" relationship="2" relative="org.eclipse.ui.internal.ViewStack@106433d"/>
+<info part="org.eclipse.ui.views.PropertySheet" ratio="0.5" ratioLeft="505" ratioRight="505" relationship="2" relative="org.eclipse.ui.internal.ViewStack@106433d"/>
+<info part="org.eclipse.ui.editorss" ratio="0.18786693" ratioLeft="96" ratioRight="415" relationship="4" relative="org.eclipse.debug.internal.ui.NavigatorFolderView"/>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@59f6a5" ratio="0.43467337" ratioLeft="173" ratioRight="225" relationship="4" relative="org.eclipse.ui.editorss">
+<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
+<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
+<page content="com.rsi.idldt.ui.views.ProfilerView" label="Profiler"/>
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+<part id="3"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.debug.internal.ui.ToolsFolderView" ratio="0.5" ratioLeft="505" ratioRight="505" relationship="2" relative="org.eclipse.debug.internal.ui.NavigatorFolderView">
+<folder activePageID="org.eclipse.debug.ui.BreakpointView" appearance="2" expanded="2">
+<page content="org.eclipse.debug.ui.VariableView" label="Variables"/>
+<page content="org.eclipse.debug.ui.BreakpointView" label="Breakpoints"/>
+<page content="org.eclipse.debug.ui.ExpressionView" label="LabelNotFound"/>
+<page content="org.eclipse.debug.ui.RegisterView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33">
+<part id="0"/>
+<part id="1"/>
+</presentation>
+</folder>
+</info>
+</mainWindow>
+</layout>
+</perspective>
+<perspective editorAreaTrimState="2" editorAreaVisible="1" fixed="0" version="0.016">
+<descriptor class="com.rsi.idldt.internal.ui.IDLPerspectiveFactory" id="com.rsi.idldt.ui.IDLPerspective" label="IDL"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.annotationNavigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.navigation"/>
+<alwaysOnActionSet id="org.eclipse.ui.edit.text.actionSet.convertLineDelimitersTo"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.keyBindings"/>
+<alwaysOnActionSet id="org.eclipse.ui.WorkingSetActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.actionSet.openFiles"/>
+<alwaysOnActionSet id="org.eclipse.update.ui.softwareUpdates"/>
+<alwaysOnActionSet id="org.eclipse.ui.cheatsheets.actionSet"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.CmdLine"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.File"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.Run"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.Wizard"/>
+<alwaysOnActionSet id="com.rsi.idldt.ui.actionSets.Help"/>
+<alwaysOnActionSet id="org.eclipse.search.searchActionSet"/>
+<alwaysOnActionSet id="org.eclipse.ui.NavigateActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.breakpointActionSet"/>
+<alwaysOnActionSet id="org.eclipse.debug.ui.debugActionSet"/>
+<show_view_action id="org.eclipse.debug.ui.BreakpointView"/>
+<show_view_action id="org.eclipse.debug.ui.DebugView"/>
+<show_view_action id="com.rsi.idldt.ui.views.CommandLineView"/>
+<show_view_action id="org.eclipse.ui.console.ConsoleView"/>
+<show_view_action id="com.rsi.idldt.ui.views.CommandHistoryView"/>
+<show_view_action id="org.eclipse.search.ui.views.SearchView"/>
+<show_view_action id="org.eclipse.ui.views.ProblemView"/>
+<show_view_action id="com.rsi.idldt.ui.views.ProfilerView"/>
+<show_view_action id="org.eclipse.ui.navigator.ProjectExplorer"/>
+<show_view_action id="org.eclipse.ui.views.ContentOutline"/>
+<show_view_action id="org.eclipse.ui.views.TaskList"/>
+<show_view_action id="org.eclipse.ui.views.BookmarkView"/>
+<show_view_action id="org.eclipse.debug.ui.VariableView"/>
+<new_wizard_action id="com.rsi.idldt.core.ui.newUntitledProWizard"/>
+<new_wizard_action id="com.rsi.idldt.core.ui.newProjectWizard"/>
+<new_wizard_action id="org.eclipse.ui.wizards.new.folder"/>
+<perspective_action id="org.eclipse.debug.ui.DebugPerspective"/>
+<perspective_action id="com.rsi.idldt.ui.IDLPerspective"/>
+<view id="org.eclipse.ui.console.ConsoleView"/>
+<view id="org.eclipse.ui.views.TaskList"/>
+<view id="org.eclipse.debug.ui.VariableView"/>
+<view id="org.eclipse.ui.views.ProblemView"/>
+<view id="org.eclipse.ui.navigator.ProjectExplorer"/>
+<view id="org.eclipse.ui.views.ContentOutline"/>
+<view id="org.eclipse.debug.ui.DebugView"/>
+<view id="com.rsi.idldt.ui.views.CommandLineView"/>
+<view id="com.rsi.idldt.ui.views.CommandHistoryView"/>
+<fastViewBars/>
+<viewLayoutRec id="com.rsi.idldt.ui.views.CommandLineView" showTitle="true" standalone="true"/>
+<layout>
+<mainWindow>
+<info folder="true" part="left">
+<folder activePageID="org.eclipse.ui.navigator.ProjectExplorer" appearance="2" expanded="2">
+<page content="org.eclipse.ui.navigator.ProjectExplorer" label="Project Explorer"/>
+<page content="org.eclipse.ui.views.ContentOutline" label="Outline"/>
+<page content="org.eclipse.debug.ui.DebugView" label="Debug"/>
+<page content="org.eclipse.ui.views.ResourceNavigator" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@5db9eb" ratio="0.7495049" ratioLeft="757" ratioRight="253" relationship="2" relative="left">
+<folder appearance="2" expanded="2">
+<page content="org.eclipse.help.ui.HelpView" label="LabelNotFound"/>
+<page content="org.eclipse.ui.internal.introview" label="LabelNotFound"/>
+<page content="org.eclipse.ui.cheatsheets.views.CheatSheetView" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33"/>
+</folder>
+</info>
+<info folder="true" part="bottom" ratio="0.47586206" ratioLeft="276" ratioRight="304" relationship="4" relative="left">
+<folder activePageID="org.eclipse.ui.console.ConsoleView" appearance="2" expanded="2">
+<page content="org.eclipse.ui.console.ConsoleView" label="Console"/>
+<page content="org.eclipse.ui.views.TaskList" label="Tasks"/>
+<page content="org.eclipse.debug.ui.VariableView" label="Variables"/>
+<page content="org.eclipse.ui.views.ProblemView" label="Problems"/>
+<page content="*" label="LabelNotFound"/>
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33">
+<part id="0"/>
+<part id="1"/>
+<part id="2"/>
+<part id="3"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="org.eclipse.ui.internal.ViewStack@5c1eae" ratio="0.76950353" ratioLeft="217" ratioRight="65" relationship="4" relative="bottom">
+<folder activePageID="com.rsi.idldt.ui.views.CommandLineView" appearance="3" expanded="2">
+<page content="com.rsi.idldt.ui.views.CommandLineView" label="Command Line"/>
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info folder="true" part="bottom_right" ratio="0.7" ratioLeft="707" ratioRight="303" relationship="2" relative="bottom">
+<folder activePageID="com.rsi.idldt.ui.views.CommandHistoryView" appearance="2" expanded="2">
+<page content="com.rsi.idldt.ui.views.CommandHistoryView" label="Command History"/>
+<presentation id="org.eclipse.ui.internal.presentations.r33.WorkbenchPresentationFactory_33">
+<part id="0"/>
+</presentation>
+</folder>
+</info>
+<info part="org.eclipse.ui.editorss" ratio="0.29890764" ratioLeft="301" ratioRight="706" relationship="2" relative="left"/>
+</mainWindow>
+</layout>
+</perspective>
+</perspectives>
+<workingSets/>
+<navigationHistory/>
+<input factoryID="org.eclipse.ui.internal.model.ResourceFactory" path="/" type="8"/>
+</page>
+<workbenchWindowAdvisor/>
+<actionBarAdvisor/>
+<trimLayout>
+<trimArea IMemento.internal.id="128">
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.WorkbenchWindow.topBar"/>
+</trimArea>
+<trimArea IMemento.internal.id="1024">
+<trimItem IMemento.internal.id="org.eclise.ui.internal.FastViewBar"/>
+<trimItem IMemento.internal.id="org.eclipse.jface.action.StatusLineManager"/>
+<trimItem IMemento.internal.id="org.eclipse.ui.internal.progress.ProgressRegion"/>
+</trimArea>
+</trimLayout>
+</window>
+<mruList>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="geteos_ver16.pro" tooltip="avhrr-ndvi-metrics/geteos_ver16.pro">
+<persistable path="/avhrr-ndvi-metrics/geteos_ver16.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="getsos_ver16.pro" tooltip="avhrr-ndvi-metrics/getsos_ver16.pro">
+<persistable path="/avhrr-ndvi-metrics/getsos_ver16.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="getslope.pro" tooltip="avhrr-ndvi-metrics/getslope.pro">
+<persistable path="/avhrr-ndvi-metrics/getslope.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="getsos_ver18.pro" tooltip="avhrr-ndvi-metrics/getsos_ver18.pro">
+<persistable path="/avhrr-ndvi-metrics/getsos_ver18.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="geteos_ver18.pro" tooltip="avhrr-ndvi-metrics/geteos_ver18.pro">
+<persistable path="/avhrr-ndvi-metrics/geteos_ver18.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="getcrossover_percentage_extremeslope_ver15.pro" tooltip="avhrr-ndvi-metrics/getcrossover_percentage_extremeslope_ver15.pro">
+<persistable path="/avhrr-ndvi-metrics/getcrossover_percentage_extremeslope_ver15.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="computemetrics_by1yr.pro" tooltip="avhrr-ndvi-metrics/computemetrics_by1yr.pro">
+<persistable path="/avhrr-ndvi-metrics/computemetrics_by1yr.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="avhrr_produce_band_name_yyyymmdd.pro" tooltip="avhrr-ndvi-metrics/avhrr_produce_band_name_yyyymmdd.pro">
+<persistable path="/avhrr-ndvi-metrics/avhrr_produce_band_name_yyyymmdd.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="findday.pro" tooltip="avhrr-ndvi-metrics/findday.pro">
+<persistable path="/avhrr-ndvi-metrics/findday.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="avhrr_produce_band_name.pro" tooltip="avhrr-ndvi-metrics/avhrr_produce_band_name.pro">
+<persistable path="/avhrr-ndvi-metrics/avhrr_produce_band_name.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="avhrr_time_series_process.pro" tooltip="avhrr-ndvi-metrics/avhrr_time_series_process.pro">
+<persistable path="/avhrr-ndvi-metrics/avhrr_time_series_process.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="avhrr_calculate_ndvi_metrics_tile.pro" tooltip="avhrr-ndvi-metrics/avhrr_calculate_ndvi_metrics_tile.pro">
+<persistable path="/avhrr-ndvi-metrics/avhrr_calculate_ndvi_metrics_tile.pro"/>
+</file>
+<file factoryID="org.eclipse.ui.part.FileEditorInputFactory" id="com.rsi.idldt.proeditor.ProEditor" name="avhrr_user_metrics_by1yr.pro" tooltip="avhrr-ndvi-metrics/avhrr_user_metrics_by1yr.pro">
+<persistable path="/avhrr-ndvi-metrics/avhrr_user_metrics_by1yr.pro"/>
+</file>
+</mruList>
+</workbench>

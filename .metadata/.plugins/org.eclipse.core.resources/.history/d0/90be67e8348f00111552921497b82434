@@ -1,0 +1,127 @@
+;jiang Zhu, 2/17/2011,jiang@gina.alaska.edu
+;This program calls subroutines to interpolate a three-year time-series data,
+;smooth mid-year time-series data, and calculate the metrics for the mid-year time-series data.
+;The inputs are: 
+;tmp (three-year-time-series-cvector), 
+;bnames (three-year-time-series-vector name),
+;threshold (fill value for no data, 60b),
+;snowcld (fill value for snow and cloud, 60b),
+;outputs are:
+;mid_interp (mid-year interpolated vector),
+;mid_smooth (mod-year smoothed vector),
+;mid_bname (mid-year smoothed vector's band names),
+;vmetrics (mid-year metrics).
+ 
+;jzhu, 5/5/2011, use the program provided by Amy to do moving smooth and calculate the crossover
+ 
+;jzhu, 9/8/2011, ver9 processes the one-year-stacking file which includes ndvi and bq together.  
+
+pro avhrr_time_series_process,tmp,tmp_sm,bn,vmetrics
+
+;---1. data in tmp are in the range of 0 to 200, convert the data range into -1 to 1
+
+a=-100  
+sfactor=0.01
+tmp1    = (tmp +a )*sfactor
+tmp_sm1 = (tmp_sm +a)*sfactor
+
+;---2. 
+
+bpy =n_elements(tmp_sm)  ; num of band in one year, 42
+
+bq=bytarr(bpy)
+bq(*)=1          ; assume every point is good quality
+
+CurrentBand=10
+DaysPerBand=10  ; day interval between two consecituve bands =7 days
+
+;---get the day between two 7-day band
+
+intv_day = fix( strmid( bn(1),7,3 ) )-fix(strmid( bn(0),7,3 ) ) 
+
+;This is the interval days between two measurement weeks. The band name format is:n-yyyy-ddd-ddd.
+
+start_day =fix(strmid( bn(0),7,3) ) ; this is the first date of the first measurement week
+
+;---define out_v 
+
+out_v=fltarr(12) ; used to store metrics, initial value out_v(*)=0
+
+;---initalize metrics flag
+
+mflg=0    ; initial value 0, 0---not valid metrics, 1-- valid metrics
+
+wl=[22,22]  ;for modis ndvi, 7 days/period, 35*7=225 days, 
+            ;for avhrr ndvi, 10 days/period,22*10=220 days
+
+metrics=ComputeMetrics_by1yr(tmp_sm, tmp, bq, bn, wl,bpy,CurrentBand,DaysPerBand)
+
+;convert sost->onp, sosn->onv, eost->endp,eosn->endv
+
+onp=metrics.sost
+onv=metrics.sosn
+endp=metrics.eost
+endv=metrics.eosn
+
+;---calculate NDVI of onset
+
+
+;onv=( ndvi(onp)+a )*sfactor
+
+;---calculate NDVI of end-of-greenness
+
+;endv=( ndvi(endp)+a )*sfactor
+
+;---get additional condition to make sure the metrics calculation is resonable. default condition is
+;---the end-of-greenness -stsrt-of-grenness must greater than 35 days. pay attention this condition
+
+if endp LE 0 or onp LE 0 or endp -onp LE 3 then begin
+
+return
+
+endif 
+
+
+
+maxp=metrics.maxt
+
+maxv=metrics.maxn
+
+mflg=1 ; valid metrics
+
+out_v(11)=1 ; valid metrics data flag
+
+
+;---convert onp, endp, maxp into related day labels, because onp,endp,maxp are float data, they indicate exect day
+
+
+onpday = findday(bn, onp) ;day
+
+endpday= findday(bn,endp);day
+
+maxpday= findday(bn,maxp);day
+
+
+ranv =metrics.rangeN
+
+rtup= metrics.slopeup     ; positive, ndvi/day
+
+rtdnp=-metrics.slopedown  ; negative, ndvi/day
+
+tindvi=metrics.totalndvi ;ndvi*day
+
+out_v[0]=onpday ;unit day
+out_v[1]=onv    ;normalized ndvi
+out_v[2]=endpday ;unit day
+out_v[3]=endv   ;normoalized ndvi
+out_v[4]=endpday-onpday ;unit day
+out_v[5]=maxpday ;unit day
+out_v[6]=maxv ; normalized ndvi
+out_v[7]=ranv; normalized ndvi
+out_v[8]=rtup; slopeup, ndvi/day
+out_v[9]=rtdnp ;slopedown, ndvi/day 
+out_v[10]=tindvi; ndvi*day
+ 
+return
+
+end

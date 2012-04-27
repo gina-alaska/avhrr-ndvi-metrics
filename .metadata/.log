@@ -1,0 +1,108 @@
+!SESSION 2012-04-24 15:37:51.837 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.5.0_11
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.core.resources 4 2 2012-04-24 15:38:41.621
+!MESSAGE Problems occurred when invoking code from plug-in: "org.eclipse.core.resources".
+!STACK 0
+java.lang.NullPointerException
+	at com.rsi.idldt.core.internal.projects.WorkspaceResourceChangeListener.resourceChanged(WorkspaceResourceChangeListener.java:151)
+	at org.eclipse.core.internal.events.NotificationManager$2.run(NotificationManager.java:282)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:37)
+	at org.eclipse.core.internal.events.NotificationManager.notify(NotificationManager.java:276)
+	at org.eclipse.core.internal.events.NotificationManager.handleEvent(NotificationManager.java:260)
+	at org.eclipse.core.internal.resources.Workspace.broadcastEvent(Workspace.java:305)
+	at org.eclipse.core.internal.resources.Resource.unprotectedMove(Resource.java:1702)
+	at org.eclipse.core.internal.resources.Resource.move(Resource.java:1358)
+	at org.eclipse.ui.ide.undo.WorkspaceUndoUtil.move(WorkspaceUndoUtil.java:472)
+	at org.eclipse.ui.ide.undo.MoveResourcesOperation.move(MoveResourcesOperation.java:136)
+	at org.eclipse.ui.ide.undo.MoveResourcesOperation.doExecute(MoveResourcesOperation.java:104)
+	at org.eclipse.ui.ide.undo.AbstractWorkspaceOperation$1.run(AbstractWorkspaceOperation.java:206)
+	at org.eclipse.core.internal.resources.Workspace.run(Workspace.java:1797)
+	at org.eclipse.ui.ide.undo.AbstractWorkspaceOperation.execute(AbstractWorkspaceOperation.java:204)
+	at org.eclipse.core.commands.operations.DefaultOperationHistory.execute(DefaultOperationHistory.java:511)
+	at org.eclipse.ui.actions.RenameResourceAction$8.run(RenameResourceAction.java:645)
+	at org.eclipse.jface.operation.ModalContext$ModalContextThread.run(ModalContext.java:113)
+!SESSION 2012-04-24 22:18:58.018 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.5.0_11
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.jface 4 0 2012-04-27 13:49:17.140
+!MESSAGE Undefined context while filtering dialog/window contexts
+!STACK 0
+org.eclipse.core.commands.common.NotDefinedException: Cannot get the parent identifier from an undefined context. org.eclipse.debug.ui.BreakpointView
+	at org.eclipse.core.commands.contexts.Context.getParentId(Context.java:201)
+	at org.eclipse.jface.bindings.BindingManager.createFilteredContextTreeFor(BindingManager.java:825)
+	at org.eclipse.jface.bindings.BindingManager.recomputeBindings(BindingManager.java:1720)
+	at org.eclipse.jface.bindings.BindingManager.contextManagerChanged(BindingManager.java:689)
+	at org.eclipse.core.commands.contexts.ContextManager.fireContextManagerChanged(ContextManager.java:152)
+	at org.eclipse.core.commands.contexts.ContextManager.addActiveContext(ContextManager.java:96)
+	at org.eclipse.ui.internal.contexts.ContextAuthority.updateContext(ContextAuthority.java:758)
+	at org.eclipse.ui.internal.contexts.ContextAuthority.activateContext(ContextAuthority.java:175)
+	at org.eclipse.ui.internal.contexts.ContextService.activateContext(ContextService.java:88)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.doActivateContext(SlaveContextService.java:279)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.activateContext(SlaveContextService.java:164)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.activateContext(SlaveContextService.java:133)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.doActivateContext(SlaveContextService.java:279)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.activateContext(SlaveContextService.java:122)
+	at org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView.partActivated(BreakpointsView.java:768)
+	at org.eclipse.ui.internal.PartListenerList$1.run(PartListenerList.java:72)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:37)
+	at org.eclipse.core.runtime.Platform.run(Platform.java:857)
+	at org.eclipse.ui.internal.PartListenerList.fireEvent(PartListenerList.java:57)
+	at org.eclipse.ui.internal.PartListenerList.firePartActivated(PartListenerList.java:70)
+	at org.eclipse.ui.internal.PartService.firePartActivated(PartService.java:73)
+	at org.eclipse.ui.internal.PartService.setActivePart(PartService.java:171)
+	at org.eclipse.ui.internal.WorkbenchPagePartList.fireActivePartChanged(WorkbenchPagePartList.java:56)
+	at org.eclipse.ui.internal.PartList.setActivePart(PartList.java:126)
+	at org.eclipse.ui.internal.WorkbenchPage.setActivePart(WorkbenchPage.java:3384)
+	at org.eclipse.ui.internal.WorkbenchPage.requestActivation(WorkbenchPage.java:2928)
+	at org.eclipse.ui.internal.PartPane.requestActivation(PartPane.java:265)
+	at org.eclipse.ui.internal.PartPane.setFocus(PartPane.java:311)
+	at org.eclipse.ui.internal.PartStack.presentationSelectionChanged(PartStack.java:846)
+	at org.eclipse.ui.internal.PartStack.access$1(PartStack.java:829)
+	at org.eclipse.ui.internal.PartStack$1.selectPart(PartStack.java:139)
+	at org.eclipse.ui.internal.presentations.util.TabbedStackPresentation$1.handleEvent(TabbedStackPresentation.java:131)
+	at org.eclipse.ui.internal.presentations.util.AbstractTabFolder.fireEvent(AbstractTabFolder.java:267)
+	at org.eclipse.ui.internal.presentations.util.AbstractTabFolder.fireEvent(AbstractTabFolder.java:276)
+	at org.eclipse.ui.internal.presentations.r33.DefaultTabFolder.access$1(DefaultTabFolder.java:1)
+	at org.eclipse.ui.internal.presentations.r33.DefaultTabFolder$2.handleEvent(DefaultTabFolder.java:84)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:66)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1101)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1125)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1110)
+	at org.eclipse.swt.widgets.Widget.notifyListeners(Widget.java:951)
+	at org.eclipse.swt.custom.CTabFolder.setSelection(CTabFolder.java:3227)
+	at org.eclipse.swt.custom.CTabFolder.onMouse(CTabFolder.java:2005)
+	at org.eclipse.swt.custom.CTabFolder$1.handleEvent(CTabFolder.java:316)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:66)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1101)
+	at org.eclipse.swt.widgets.Display.runDeferredEvents(Display.java:3319)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:2971)
+	at org.eclipse.ui.internal.Workbench.runEventLoop(Workbench.java:2389)
+	at org.eclipse.ui.internal.Workbench.runUI(Workbench.java:2353)
+	at org.eclipse.ui.internal.Workbench.access$4(Workbench.java:2219)
+	at org.eclipse.ui.internal.Workbench$4.run(Workbench.java:466)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:289)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:461)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:106)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:153)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:106)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:76)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:363)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:176)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:504)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:443)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1169)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1144)

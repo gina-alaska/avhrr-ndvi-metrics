@@ -1,0 +1,35 @@
+;jiang Zhu, 2/17/2011,jiang@gina.alaska.edu
+;This program calls subroutines to interpolate a three-year time-series data,
+;smooth mid-year time-series data, and calculate the metrics for the mid-year time-series data.
+;The inputs are: 
+;tmp (three-year-time-series-cvector), 
+;bnames (three-year-time-series-vector name),
+;threshold (fill value for no data, 60b),
+;snowcld (fill value for snow and cloud, 60b),
+;outputs are:
+;mid_interp (mid-year interpolated vector),
+;mid_smooth (mod-year smoothed vector),
+;mid_bname (mid-year smoothed vector's band names),
+;vmetrics (mid-year metrics).
+ 
+;jzhu, 5/5/2011, use the program provided by Amy to do moving smooth and calculate the crossover
+ 
+;jzhu, 9/8/2011, ver9 processes the one-year-stacking file which includes ndvi and bq together.  
+
+pro time_series_process,tmp,bnames,vmetrics
+
+;--- data in tmp are in the range of 0 to 200, convert the data range into -1 to 1
+
+a=-100  
+sfactor=0.01
+
+
+tmp1 =( tmp +a )*sfactor
+
+user_metrics_nps_by1yr, mid_smooth1, mid_interp1, mid_bq, mid_bname, metrics_cal_threshold,vmetrics ;vout--smoothed vector, vorg--orginal vector, vmetrics--metrics
+
+return
+
+endelse 
+
+end
