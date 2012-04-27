@@ -1,0 +1,760 @@
+PRO smoother_event, ev
+
+  WIDGET_CONTROL,ev.id,GET_UVALUE=uvalue
+  WIDGET_CONTROL,ev.top,GET_UVALUE=mLocal
+
+;print, "IN CHILD1 EVENT"
+;print, "WCHILD1:", mLocal.mParent.wSmoother
+;print, "WCHILD2:", mLocal.mParent.wFSZView
+;print, "EV.ID:",ev.id
+;print, "EV.TOP:",ev.top
+;print, "EV.HANDLER:",ev.handler
+
+tname = Tag_Names(ev, /Structure_Name)
+CASE (tname) OF
+   'WZOOMDRAW': BEGIN
+	Widget_Control,mLocal.xtxt,set_value=ev.x
+	Widget_Control,mLocal.ytxt,set_value=ev.y
+        UValue = 'plot_pnt'
+    END
+   ELSE:
+ENDCASE
+
+  CASE (uvalue) OF
+
+;========= BGOPTIONS
+    'bgOptions': BEGIN
+        widget_control, mLocal.bgOptions, get_value=butval
+        CASE (butval) OF
+          0: BEGIN
+               widget_control, mLocal.wsbase, map=0 
+               widget_control, mLocal.wmbase, map=0 
+               widget_control, mLocal.wpbase, map=1 
+             end
+          1: BEGIN
+               widget_control, mLocal.wpbase, map=0 
+               widget_control, mLocal.wmbase, map=0 
+               widget_control, mLocal.wsbase, map=1 
+             end
+          2: BEGIN
+               widget_control, mLocal.wpbase, map=0 
+               widget_control, mLocal.wsbase, map=0 
+               widget_control, mLocal.wmbase, map=1 
+             end
+          else:
+        end;mLocal.bgOptions
+     end;bgOptions
+
+;========= FULLPLOT
+    'FullPlot': BEGIN
+        widget_control,mLocal.wXMin, get_value=xmin
+        widget_control,mLocal.wXMax, get_value=xmax
+        widget_control,mLocal.wYMin, get_value=ymin
+        widget_control,mLocal.wYMax, get_value=ymax
+
+        !X.S=mLocal.fpscale(0:1)
+        !Y.S=mLocal.fpscale(2:3)
+       
+        widget_control, mLocal.wFullPlot, get_value=wfp
+        wset,wfp
+
+        xMin0 = 0
+        xMax0 = mLocal.nb-1
+        yMin0 = mLocal.minval
+        yMax0 = mLocal.maxval 
+
+        if(ev.release eq 1 and not compare(!x.s, [0,0])) then BEGIN
+
+           xyData = Convert_Coord(ev.x, ev.y, /Device, /To_Data)
+           
+           mindiff = abs(xyData(0)-xmin) 
+           maxdiff = abs(xyData(0)-xmax) 
+
+
+           xmin = xmin*(maxdiff lt mindiff) + xyData(0)*(maxdiff ge mindiff)
+           xmax = xmax*(maxdiff ge mindiff) + xyData(0)*(maxdiff lt mindiff) 
+
+           xmin = xmin > xMin0
+           xmax = xmax < xMax0
+
+           widget_control, mLocal.wXMin, set_value=round_to(xmin, 1)
+           widget_control, mLocal.wXMax, set_value=round_to(xmax,1)
+
+        end; ev.release =1
+
+        if(ev.release eq 2 and not compare(!x.s, [0,0])) then BEGIN
+
+           xyData = Convert_Coord(ev.x, ev.y, /Device, /To_Data)
+           
+;           mindiff = abs(xyData(0)/mLocal.bpy-xmin) 
+;           maxdiff = abs(xyData(0)/mLocal.bpy-xmax) 
+           mindiff = abs(xyData(1)-ymin) 
+           maxdiff = abs(xyData(1)-ymax) 
+
+
+           ymin = ymin*(maxdiff lt mindiff) + xyData(1)*(maxdiff ge mindiff)
+           ymax = ymax*(maxdiff ge mindiff) + xyData(1)*(maxdiff lt mindiff) 
+
+           ymin = ymin > yMin0
+           ymax = ymax < yMax0
+
+           widget_control, mLocal.wYMin, set_value=round_to(ymin, 1)
+          widget_control, mLocal.wYMax, set_value=round_to(ymax,1)
+        end; ev.release =2
+
+
+
+    end;FullPlot 
+
+    'ZoomPlot': BEGIN
+        widget_control,mLocal.wXMin, get_value=xmin
+        widget_control,mLocal.wXMax, get_value=xmax
+        widget_control,mLocal.wYMin, get_value=ymin
+        widget_control,mLocal.wYMax, get_value=ymax
+
+        !X.S=mLocal.zpscale(0:1)
+        !Y.S=mLocal.zpscale(2:3)
+
+        Widget_Control, mLocal.wStartYear, Get_Value=StartYear
+xminyear=band2year(xmin, StartYear, mLocal.nb, mLocal.bpy)
+xmaxyear=band2year(xmax, StartYear, mLocal.nb, mLocal.bpy)
+yminndvi=poly(ymin, mLocal.NDCoefs)
+ymaxndvi=poly(ymax, mLocal.NDCoefs)
+
+        if(not compare(!x.s, [0,0])) then BEGIN
+           Widget_Control, mLocal.wZoomPlot, Get_Value=wzp
+           wset, wzp
+           xyData = Convert_Coord(ev.x, ev.y, /Device, /To_Data)
+
+           xloc = (xminyear > xyData[0]) < xmaxyear
+           yloc = (yminndvi > xyData[1]) < ymaxndvi
+
+xloc=strcompress(frac2date(xloc, /CALENDAR))
+
+           Widget_Control, mLocal.wXonPlot, Set_Value=xloc;round_to(xloc,0.001)
+           Widget_Control, mLocal.wYonPlot, Set_Value=flt2str(yloc, 3, /plus);round_to(yloc,0.001)
+       END; !x.s is 0
+    END
+
+;========= BGPLOT
+    'bgPlot': BEGIN
+;        widget_control, mLocal.bgPlot, get_value=curval
+;print, "bgPlot = ", curval
+
+     end;bgPlot 
+
+
+;========= NEW
+    'new':BEGIN
+	;file = dialog_pickfile(title='Choose image file:')
+	;slb = get_file_info(file)
+         minfo = Open_File()
+     end;new
+
+;========= SLIDE
+;    'slide':BEGIN
+;	widget_control,mLocal.slide,get_value=b
+;	wset,mLocal.dval
+;	z=where(mLocal.image(*,*,b-1) eq 0)
+;	temp = (float(mLocal.image(*,*,b-1)) - mLocal.minval)/(mLocal.maxval-mLocal.minval)*255 
+;	if (z(0) ne -1) then temp(z) = 0
+;	tv,temp
+;     end;slide
+
+
+
+
+;========= PLOT_PNT
+    'plot_pnt':BEGIN
+  !p.background=rgb(180,180,180)
+  !p.color=0
+;  !p.font=-1
+	;read point
+	widget_control,mLocal.xtxt,get_value=x
+	widget_control,mLocal.ytxt,get_value=y
+
+        Widget_Control, mLocal.wStartYear, Get_Value=StartYear
+
+        widget_control,mLocal.pp,get_value=pp
+        widget_control,mLocal.ps,get_value=ps
+        widget_control,mLocal.swin,get_value=sw
+        widget_control,mLocal.rwin,get_value=rw
+        widget_control,mLocal.cwin,get_value=cw
+        widget_control,mLocal.pwght,get_value=pwt
+        widget_control,mLocal.swght,get_value=swt
+        widget_control,mLocal.vwght,get_value=vwt
+
+Widget_control, mLocal.wWindowLength, get_value=WindowLength
+
+mLocal.mSmoothParam.pp=pp
+mLocal.mSmoothParam.ps=ps
+mLocal.mSmoothParam.swin=sw
+mLocal.mSmoothParam.rwin=rw
+mLocal.mSmoothParam.cwin=cw
+mLocal.mSmoothParam.pwght=pwt
+mLocal.mSmoothParam.swght=swt
+mLocal.mSmoothParam.vwght=vwt
+mLocal.mSmoothParam.maxval=mLocal.maxval
+mLocal.mSmoothParam.minval=mLocal.minval
+
+
+CASE(mlocal.dt)OF
+1: begin 
+;     offset=0b  
+     offset= 50b  
+     scale = 1b
+   end
+2: begin 
+;     offset=1000 
+;     scale = 2
+      offset=0
+      scale=1
+   end
+else:
+endcase
+
+        IF ( NOT compare(mLocal.mData.xyOld, [x,y]) ) THEN BEGIN 
+
+            widget_control, /HourGlass
+            tmp = pixread(mLocal.file, x,y,mLocal.ns, mLocal.nl, $
+                   mLocal.nb, dtype=mLocal.dt)
+
+            openw,unit,'/tmp/Smoother/pixel',/get_lun
+            writeu,unit,(tmp+offset)/scale
+            mLocal.mData.Raw = tmp
+            free_lun,unit
+
+
+            ismth_data=Call_Smoother(mLocal,x,y)*scale-offset
+            mLocal.mData.Smooth = ismth_data(*)
+;help, ismth_data
+;print, string(ismth_data)
+
+            mLocal.mSmoothParam.ps=ps
+            mMetrics=computemetrics(poly(mLocal.mData.Smooth,mLocal.NDCoefs), $
+                 mlocal.nb/mlocal.bpy*mLocal.mSmoothParam.ps, WindowLength, mlocal.dt)
+
+            ismth_data = mLocal.mData.Smooth
+            tmp = mLocal.mData.Raw
+
+        END ELSE BEGIN
+
+            ismth_data=Call_Smoother(mLocal,x,y)*scale-offset
+            mLocal.mData.Smooth = ismth_data(*)
+
+            mLocal.mSmoothParam.ps=ps
+            mMetrics=computemetrics(poly(mLocal.mData.Smooth,mLocal.NDCoefs), $
+                 mlocal.nb/mlocal.bpy*mLocal.mSmoothParam.ps, WindowLength, mlocal.dt)
+
+            ismth_data = mLocal.mData.Smooth
+            tmp = mLocal.mData.Raw
+;            ismth_data=Call_Smoother(mLocal,x,y)*scale-offset
+;            mLocal.mData.Smooth = ismth_data(0,*)
+;
+;            mLocal.mSmoothParam.ps=ps
+;            mMetrics=computemetrics(poly(mLocal.mData.Smooth, mLocal.NDCoefs), $
+;                 mlocal.nb/mlocal.bpy*mLocal.mSmoothParam.ps, WindowLength, mlocal.dt)
+;
+;            ismth_data = mLocal.mData.Smooth
+;            tmp = mLocal.mData.Raw
+        END
+
+;        diff = float(tmp) - ismth_data
+
+	tstr = 'Sample: '+strcompress(x,/Remove_All)+$
+               '  Line: '+strcompress(y,/Remove_All)
+;	widget_control,mLocal.ti,set_value=tstr
+        ;read plot parameters
+	widget_control,mLocal.wXMin,get_value=xmin_year
+	widget_control,mLocal.wXMax,get_value=xmax_year
+	widget_control,mLocal.wYMin,get_value=ymin
+	widget_control,mLocal.wYMax,get_value=ymax
+	widget_control,mLocal.ydmin,get_value=ydmin
+	widget_control,mLocal.ydmax,get_value=ydmax
+	xmin = fix(xmin_year); - mLocal.bpy)
+	xmax = fix(xmax_year); - 1)
+
+        inumbers = findgen(mLocal.nb)
+;        xnumbers = (findgen(xmax - xmin+1) + xmin)
+        xnumbers = band2year(findgen(xmax - xmin+1) + xmin, StartYear, mLocal.nb, mLocal.bpy)
+
+
+;
+; Plot Zoomed in Data
+;
+        widget_control, mLocal.wZoomPlot, get_value=wzp
+        wset, wzp
+        afilename=str_sep(mLocal.file, '/')
+        filename=afilename[n_elements(afilename)-1]
+
+	plot,xnumbers,poly(tmp(xmin:xmax),mLocal.NDCoefs), $
+                        YRange=poly([ymin,ymax],mLocal.NDCoefs),$
+                        XRange=[min(xnumbers), max(xnumbers)], color=0, $
+			Title=filename,$;+'  '+tstr, $
+                        /XStyle, /NoData, /YStyle, $
+                        XTitle='Year', $
+                        YTItle='NDVI'
+
+        widget_control, mLocal.bgPlot, get_value=butval
+        if (butval(0) EQ 1) THEN $
+           oplot, xnumbers, poly(tmp(xmin:xmax),mLocal.NDCoefs),color=0
+        
+        if (butval(1) EQ 1) THEN $
+           oplot, xnumbers,poly(ismth_data(xmin:xmax),mLocal.NDCoefs), color = rgb(200,0,0)
+
+
+           SOSfracyear = band2year(mMetrics.SOST, StartYear, mLocal.nb, mLocal.bpy)
+           oplot, SOSfracyear, $
+                    mMetrics.SOSN, psym=4, color=rgb(0,255,0)
+
+
+           EOSfracyear = band2year(mMetrics.EOST, StartYear, mLocal.nb, mLocal.bpy)
+
+           oplot, EOSFracYear, $
+                    mMetrics.EOSN, psym=4, color=rgb(0,0,255)
+
+           for i = 0, mLocal.nb/mLocal.bpy -2 DO BEGIN
+
+              SOSMoDayFrac = frac2date(SOSfracyear[i+1], /CALENDAR)
+              SOSMoDay = strmid(sosmodayfrac, 0, 6);Str_Sep(SOSMoDayFrac,' ')
+              if (butval(2) EQ 1) THEN $
+                 xyouts, SOSFracYear[i+1], 0.0, SOSMoDay,orientation=90, Alignment=1.0,$
+                      noclip=0
+
+              EOSMoDayFrac = frac2date(EOSfracyear[i], /CALENDAR)
+              EOSMoDay = strmid(eosmodayfrac, 0, 6);Str_Sep(EOSMoDayFrac,' ')
+              if (butval(2) EQ 1) THEN $
+                 xyouts, EOSFracYear[i], 0.0, EOSMoDay,orientation=90, Alignment=1.0 ,$
+                      noclip=0
+
+           END
+
+;
+; Put Total NDVI on Plot
+;
+           for i = 0, mLocal.nb/mLocal.bpy -1 DO $
+if (butval(2) EQ 1) THEN $
+              xyouts, band2year(mMetrics.MaxT[i], StartYear, mLocal.nb, mLocal.bpy), $
+                    mMetrics.MaxN[i],  flt2str(mMetrics.TotalNDVI[i], 1), noclip=0
+
+
+
+        mLocal.zpscale=[!X.S, !Y.S]
+
+
+;
+; Plot Difference Data
+;
+
+;avg=avg(diff)
+;std=stdev(diff)
+;print, avg, std
+        widget_control, mLocal.wDiffPlot, get_value=wdp
+        wset, wdp
+plotthosemetrics, mMetrics,background=!p.background,startyear=startyear
+
+;	plot,xnumbers,diff(xmin:xmax),xrange=float([xmin,xmax]),yrange=[ydmin,ydmax],$
+;		color=0,title='Difference data - '+tstr, /xstyle,/ystyle
+
+;
+; Plot full data set in PlotOptions box
+;
+        widget_control, mLocal.wFullPlot, get_value=wfp
+        wset,wfp
+        !p.multi=0
+yMin0 = mLocal.minval
+yMax0 = mLocal.maxval 
+	plot,inumbers,tmp,yrange=[ymin0,ymax0],xrange=[min(inumbers),max(inumbers)], $
+			color=0,$
+			title=tstr, /xstyle, $
+                        /ystyle, xmargin=[5,1],ymargin=[2,2]
+        oplot, inumbers(xmin:xmax), ismth_data(xmin:xmax), color = rgb(200,0,0)
+;        oplot, float([min(xnumbers),min(xnumbers)]), [ymin,ymax],color=rgb(255,0,0)
+;        oplot, float([max(xnumbers),max(xnumbers)]), [ymin,ymax],color=rgb(255,0,0)
+mPlotBox = mLocal.mPlotBox
+Widget_Control, mLocal.wXMin, Get_Value=XMin
+Widget_Control, mLocal.wXMax, Get_Value=XMax
+Widget_Control, mLocal.wYMin, Get_Value=YMin
+Widget_Control, mLocal.wYMax, Get_Value=YMax
+mPlotBox.XBox = [XMin, XMax, XMax, XMin, XMin]
+mPlotBox.YBox = [YMin, YMin, YMax, YMax, YMin]
+        plots, mPlotBox.XBox, mPlotBox.YBox, color=rgb(255,0,0)
+
+;        mLocal.fpscale=[!X.CRange, !Y.CRange]
+        mLocal.fpscale=[!X.S, !Y.S]
+
+;window,1
+;plot, xnumbers, ismth_data(xmin:xmax), color=rgb(255,0,0)
+
+
+        mLocal.mData.xyOld = [x,y]
+        mLocal.mData.SmoothOld = mLocal.mData.Smooth
+        mLocal.mData.RawOld = mLocal.mData.Raw
+
+     end;plot_pnt
+
+    'dt':BEGIN
+	print,ev.value
+     end;dt
+    'ftype':BEGIN
+	print,ev.index
+     end;ftype
+    'quit':BEGIN
+        WIDGET_CONTROL,/destroy,ev.top
+     end;quit
+    'gencube':BEGIN
+ widget_control, /hourglass
+        gen_cube, mLocal
+     END;gencube
+
+
+
+
+;
+; PS
+; 
+
+    'bgenps': BEGIN
+  !p.background=rgb(180,180,180)
+  !p.color=0
+
+        file=dialog_pickfile(filter='*.ps', /write)
+
+if(file NE '') THEN BEGIN
+        widget_control,mLocal.xtxt,get_value=x
+        widget_control,mLocal.ytxt,get_value=y
+Widget_control, mLocal.wWindowLength, get_value=WindowLength
+mMetrics=computemetrics(poly(mLocal.mData.Smooth, mLocal.NDCoefs), $
+                 mlocal.nb/mlocal.bpy*mLocal.mSmoothParam.ps, WindowLength, mlocal.dt)
+
+
+        tstr = 'Sample: '+strcompress(x,/Remove_All)+'    Line: '+$
+                          strcompress(y,/Remove_All)
+;       widget_control,mLocal.ti,set_value=tstr
+        ;read plot parameters
+        Widget_Control, mLocal.wStartYear, Get_Value=StartYear
+        widget_control,mLocal.wXMin,get_value=xmin_year
+        widget_control,mLocal.wXMax,get_value=xmax_year
+        widget_control,mLocal.wYMin,get_value=ymin
+        widget_control,mLocal.wYMax,get_value=ymax
+        widget_control,mLocal.ydmin,get_value=ydmin
+        widget_control,mLocal.ydmax,get_value=ydmax
+        xmin = fix(xmin_year); - mLocal.bpy)
+        xmax = fix(xmax_year); - 1)
+
+        inumbers = findgen(mLocal.nb)
+        ;xnumbers = (findgen(xmax - xmin+1) + xmin)
+        xnumbers = band2year(findgen(xmax - xmin+1) + xmin, StartYear, mLocal.nb, mLocal.bpy)
+
+
+;
+; Plot Zoomed in Data
+;
+
+        tmp=mLocal.mData.Raw
+        ismth_data = mLocal.mData.Smooth
+
+        CurDev=!D.Name
+        Set_Plot, 'PS'
+        Device, file=file, /color, bits=8, /Landscape;, /Encapsulated
+
+        loadct, 23
+
+
+;
+; Plot Zoomed in Data
+;
+afilename=str_sep(mLocal.file, '/')
+filename=afilename[n_elements(afilename)-1]
+;filename='Tallgrass Prairie'
+        plot,xnumbers,poly(tmp(xmin:xmax),mLocal.NDCoefs), $
+                        YRange=poly([ymin,ymax],mLocal.NDCoefs),$
+                        XRange=[min(xnumbers), max(xnumbers)], color=0, $
+                        Title=filename,$;+'  '+tstr, $
+                        SubTitle=file, $
+                        /XStyle, /NoData, /YStyle, $
+                        XTitle='Year', $
+                        YTItle='NDVI'
+
+        widget_control, mLocal.bgPlot, get_value=butval
+        if (butval(0) EQ 1) THEN $
+           oplot, xnumbers, poly(tmp(xmin:xmax),mLocal.NDCoefs),color=0
+
+        if (butval(1) EQ 1) THEN $
+           oplot, xnumbers,poly(ismth_data(xmin:xmax),mLocal.NDCoefs), color = 255;rgb(200,0,0)
+
+
+SOSfracyear = band2year(mMetrics.SOST, StartYear, mLocal.nb, mLocal.bpy)
+           oplot, SOSfracyear, $
+                    mMetrics.SOSN, psym=4, color=175;rgb(0,255,0)
+
+
+EOSfracyear = band2year(mMetrics.EOST, StartYear, mLocal.nb, mLocal.bpy)
+
+           oplot, EOSFracYear, $
+                    mMetrics.EOSN, psym=4, color=85;rgb(0,0,255)
+
+           for i = 0, mLocal.nb/mLocal.bpy -2 DO BEGIN
+
+              SOSMoDayFrac = frac2date(SOSfracyear[i+1], /CALENDAR)
+              SOSMoDay = strmid(sosmodayfrac, 0, 6);Str_Sep(SOSMoDayFrac,' ')
+if (butval(2) EQ 1) THEN $
+              xyouts, SOSFracYear[i+1], 0.0, SOSMoDay,orientation=90, Alignment=1.0,$
+                      noclip=0,color=0
+
+              EOSMoDayFrac = frac2date(EOSfracyear[i], /CALENDAR)
+              EOSMoDay = strmid(eosmodayfrac, 0, 6);Str_Sep(EOSMoDayFrac,' ')
+if (butval(2) EQ 1) THEN $
+              xyouts, EOSFracYear[i], 0.0, EOSMoDay,orientation=90, Alignment=1.0 ,$
+                      noclip=0,color=0
+
+           END
+;
+; Put Total NDVI on Plot
+;
+           for i = 0, mLocal.nb/mLocal.bpy -1 DO $
+if (butval(2) EQ 1) THEN $
+              xyouts, band2year(mMetrics.MaxT[i], StartYear, mLocal.nb, mLocal.bpy), $
+                    mMetrics.MaxN[i],  flt2str(mMetrics.TotalNDVI[i], 1), noclip=0,color=0
+
+
+
+
+
+
+
+
+        mLocal.zpscale=[!X.S, !Y.S]
+
+        device, /close
+        set_plot, curdev
+        loadct, 0
+
+        END;file ne ''
+
+    END;bgenps
+  ENDCASE;uvalue
+
+IF (Widget_Info(ev.top, /Valid_ID)) THEN $
+        widget_control, ev.top, Set_UValue=mLocal
+
+END;event_handler
+
+;=============================;
+; WIDGET DEFINITION: smoother ;
+;=============================;
+
+FUNCTION smoother, mParent
+
+
+IF (mParent.mInfo.file EQ '') THEN mParent.mInfo=Open_File()
+
+mInfo = mParent.mInfo
+
+  !order = 1
+  !p.background=rgb(180,180,180)
+  !p.color=0
+
+  
+;get min and max of data for scaling
+IF (minfo.dt EQ 1) THEN BEGIN
+   minval = 0
+   maxval = 255
+   NDCoefs = [-1.0, 0.01]
+END ELSE BEGIN
+   minval = 0
+   maxval = 1023
+   NDCoefs = [-1.0, 0.002]
+;   minval = -1000
+;   maxval = 1000
+;   NDCoefs = [0.0, 0.001]
+
+END
+
+
+
+  wBase = Widget_Base(title='Seasonal Metrics Display',/row, Group_Leader=mParent.wBase)
+
+  lbase = Widget_Base(wBase,/column,/frame)
+
+  asText = ["Plotter", "Smoother", "Metrics"]
+  bgOptions = cw_bgroup(lbase, asText, set_value=0, row=1, /exclusive,$
+                uvalue="bgOptions",/frame)
+
+  spoptbase = Widget_Base(lbase)
+
+;
+; Smoother Options
+;
+  wsbase = Widget_Base(spoptbase,/column,/frame,map=0)
+  slabel = widget_label(wsbase,value="Smooth Parameters:")
+  pp = cw_field(wsbase,/floating,title="Peak Percentage     ",$
+			value=.3,uvalue="percent",xsize=10)
+  ps = cw_field(wsbase,/integer,title="Peaks per Season   ",$
+			value=1,uvalue="peak_season",xsize=10)
+  swin = cw_field(wsbase,/integer,title="Season Window     ",$
+			value=minfo.bpy,uvalue="season",xsize=10)
+  rwin = cw_field(wsbase,/integer,title="Regression Window ",$
+			value=5,uvalue="regwin",xsize=10)
+  cwin = cw_field(wsbase,/integer,title="Combination Window",$
+			value=5,uvalue="comwin",xsize=10)
+  pwght = cw_field(wsbase,/floating,title="Peak Weights",$
+			value=1.5,uvalue="peak_wght",xsize=10)
+  swght = cw_field(wsbase,/floating,title="Slope Weights",$
+			value=.5,uvalue="slp_wght",xsize=10)
+  vwght = cw_field(wsbase,/floating,title="Valley Weights",$
+			value=.05,uvalue="valley_wght",xsize=10)
+  wsbasegeo = widget_info(wsbase, /geometry)
+
+
+;
+; Plotter Options
+;
+  wpbase = Widget_Base(spoptbase,/column,/frame, map=1)
+  plabel = widget_label(wpbase,value="Plot Parameters:")
+  xbase = Widget_Base(wpbase,/row)
+  wXMin = cw_field(xbase,/floating,title="X Min",value=0,xsize=5)
+  wXMax = cw_field(xbase,/floating,title="X Max",$
+			value=minfo.nb-1,xsize=5)
+;  asText=["Periods","Years"]
+;  xunit = widget_droplist(xbase, value=asText)
+
+  ybase = Widget_Base(wpbase,/row)
+  wYMin = cw_field(ybase,/integer,title="Y Min",value=0,xsize=5)
+  wYMax = cw_field(ybase,/integer,title="Y Max",value=fix(maxval),xsize=5)
+;  asText=["Data","NDVI"]
+;  yunit = widget_droplist(ybase, value=asText)
+  dlabel = widget_label(wpbase,value="Difference Plot Parameters:")
+  dbase = Widget_Base(wpbase,/row)
+  ydmin = cw_field(dbase,/integer,title="Y Min",value=-200,xsize=5)
+  ydmax = cw_field(dbase,/integer,title="Y Max",value=200,xsize=5)
+  wpbasegeo = widget_info(wpbase, /geometry)
+
+
+  wFullPlot = Widget_Draw(wpbase,/button_events, uvalue='FullPlot',/frame,$
+              xsize=wpbasegeo.xsize, ysize=wsbasegeo.ysize-wpbasegeo.ysize)
+
+  
+;
+;  Metrics Options
+;
+  wmbase = Widget_Base(spoptbase,/column,/frame, map=0)
+  plabel = widget_label(wmbase,value="Metrics Parameters:")
+  wWindowLength = cw_field(wmbase,/floating,title="Window Length",value=12,xsize=5)
+  wStartYear = CW_Field(wMBase,/floating,Title="Starting Year",value=1990, xsize=5)
+
+
+
+  wpsbase = Widget_Base(lbase,column=2,/frame)
+  pslbase=Widget_Base(wpsbase,/column )
+  pslabel = widget_label(pslbase,value="Plot Single Point:")
+  xybase = Widget_Base(pslbase,/row)
+  x = cw_field(xybase,/integer,title="X:",value=0,xsize=5)
+  y = cw_field(xybase,/integer,title="Y:",value=0,xsize=5)
+  xybut = widget_button(pslbase,value='Plot Single Point',uvalue='plot_pnt')
+  bGenPS = widget_button(lbase,value='Plot PostScript',uvalue='bgenps')
+  qu = widget_button(lbase,value='QUIT',uvalue='quit')
+;  gencube = widget_button(lbase,value='Generate Cube',uvalue='gencube')
+
+  lbasegeo = widget_info(lbase, /geometry)
+
+  rbase = Widget_Base(wBase,/column,/frame)
+
+  asText=["Data","Curve", "Text"] 
+  bgPlot = cw_bgroup(wpsbase, asText, set_value=[1,1,1], column=1, /nonexclusive,$
+                uvalue="bgPlot",/frame,label_top="Show")
+
+  wZoomPlot = Widget_Draw(rbase, uvalue='ZoomPlot', /frame, $
+              xsize=500, ysize=(lbasegeo.ysize-5)/2, /Motion_Events, /Button_Events)
+
+  wDiffPlot = Widget_Draw(rbase, uvalue='DiffPlot', /frame, $
+              xsize=500, ysize=(lbasegeo.ysize-5)/2)
+
+wfXYonPlot = Widget_Base(rBase, /Row, /Align_Center)
+wXonPlot = CW_Field(wfXYonPlot, title="Date:", XSize=11, /NoEdit)
+wYonPlot = CW_Field(wfXYonPlot, title="NDVI:", XSize=6, /NoEdit)
+
+
+
+
+
+;  ti = widget_text(rbase, xsize=50,ysize=1)
+;
+  ;widget_control,ft,set_droplist_select=4
+  widget_control,wBase,/realize
+;  widget_control,di,get_value=dval
+;  wset,dval
+;  if (minfo.dt eq 0) then BEGIN
+;    temp = (image(*,*,0) - float(minval))/(maxval-minval)*255
+;    if (z(0) ne -1) then temp(z) = 0
+;    tv,temp
+;    temp = 0 
+;    z = 0
+;  endif else tvscl,image(*,*,0)
+
+
+
+if(n_elements(fpscale) eq 0) then $
+   fpscale = fltarr(4)
+if(n_elements(zpscale) eq 0) then $
+   zpscale = fltarr(4)
+
+mBox = {XCenter:-1L, YCenter: -1L, $
+        XWinSize:-1L, YWinSize:-1L, $
+        XBox:intarr(5), YBox:intarr(5), $
+        ImgOffset: intarr(2), ImgSize:intarr(2)}
+
+
+mPlotBox = mBox
+
+mSmoothParam = {msmoothparam}
+
+Widget_Control, wXMin, Get_Value=XMin
+Widget_Control, wXMax, Get_Value=XMax
+Widget_Control, wYMin, Get_Value=YMin
+Widget_Control, wYMax, Get_Value=YMax
+mPlotBox.XBox = [XMin, XMax, XMax, XMin, XMin]
+mPlotBox.YBox = [YMin, YMin, YMax, YMax, YMin]
+
+CASE (minfo.dt) OF
+   1: mData = {xyNew:[-1,-1], xyOld:[-1,-1], $
+                  raw:  bytarr(minfo.nb), smooth: bytarr(minfo.nb), $
+                  rawold:  bytarr(minfo.nb), smoothold: bytarr(minfo.nb)}
+   2: mData = {xynew:[-1,-1], xyOld:[-1,-1], $
+                  raw: intarr(minfo.nb), smooth: intarr(minfo.nb), $
+                  rawold: intarr(minfo.nb), smoothold: intarr(minfo.nb)}
+   ELSE:
+ENDCASE
+
+mParent.wSmoother = wBase
+mLocal = {mParent: mParent, $
+          wBase:wBase, $                                        ; BASE WIDGET
+          ns:minfo.ns, nl:minfo.nl, nb:minfo.nb, dt:minfo.dt, $    ; IMAGE INFO
+          bpy:minfo.bpy, file:minfo.file, $
+;          bpy:minfo.bpy, image:image,  file:minfo.file, $
+          minval:minval, maxval:maxval,$
+          pp:pp, ps:ps, swin:swin, rwin:rwin, cwin:cwin, $    ; SMOOTHER PARAMS
+          pwght:pwght, swght:swght, vwght:vwght, $ 
+          mSmoothParam: mSmoothParam, $
+          mData:mData, $
+          wWindowLength: wWindowLength, $                      ; METRICS PARAMS
+          wStartYear: wStartYear, $
+          NDCoefs: NDCoefs, $
+          wXMin:wXMin, wXMax:wXMax, xtxt:x,  $                 ; PLOT PARAMS
+          wYMin:wYMin, wYMax:wYMax, ytxt:y,  $
+          ydmin:ydmin, ydmax:ydmax, $
+          fpscale:fpscale, zpscale:zpscale, $
+          mPlotBox:mPlotBox, $
+          wpbase:wpbase, wsbase:wsbase, wmbase:wmbase, $      ; WIDGETS
+          bgOptions:bgOptions, $
+          wFullPlot:wFullPlot, wZoomPlot:wZoomPlot, $
+          wDiffPlot:wDiffPlot,bgPlot:bgPlot,$
+          bGenPS: bGenPS, $
+          wXonPlot:wXonPlot, wYonPlot:wYonPlot};, ti:ti}
+          
+widget_control, wBase, Set_UValue=mLocal
+
+XManager,'smoother',wBase,event_handler='smoother_event', /No_Block
+
+Return, wBase
+END;smoother

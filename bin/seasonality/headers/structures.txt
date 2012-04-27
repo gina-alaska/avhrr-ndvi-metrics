@@ -1,0 +1,31 @@
+;= This file contains the definition of the mImage structure used
+;= in my IDL codes.  It is for reference only
+
+
+mImage={ file: '', $              ; Image file name
+         image: -1L, $            ; Image data
+         ns: -1L, $               ; Number of samples
+         nl: -1L, $               ; Number of lines
+         nb: -1L, $               ; Number of bands
+         dt: -1L, $               ; Data type: 1=Byte, 2=i*2, etc
+         cb: -1L, $               ; Current band
+         bname: '' $              ; Text band names (eg, 'NDVI', 'Temp4', etc.) 
+       }
+
+
+mMetrics={ X: -1L                    ; Sample number
+           Y: -1L                    ; Line number
+           nModes: -1L               ; Modality (number of modes)
+           SOST: fltarr(nModes*ny)      ; Time of start of season
+           SOSN: fltarr(nModes*ny)      ; NDVI at start of season
+           EOST: fltarr(nModes*ny)      ; Time of end of season
+           EOSN: fltarr(nModes*ny)      ; NDVI at end of season
+           SlopeUp: fltarr(nModes*ny)   ; Rate of greenup
+           SlopeDown: fltarr(nModes*ny) ; Rate of senesence
+           TotNDVI: fltarr(nModes*ny)   ; Total integrated NDVI
+           MaxT: fltarr(nModes*ny)      ; Time of maximum NDVI
+           MaxN: fltarr(nModes*ny)      ; Maximum NDVI
+           RangeT: fltarr(nModes*ny)    ; Length of growing season
+           RangeN: fltarr(nModes*ny)    ; Range of NDVI
+         }
+

@@ -1,0 +1,4 @@
+TRUE = 1
+FALSE = 0 
+EPSILON = 1.0e-6
+INT_PTS_MAX = 2

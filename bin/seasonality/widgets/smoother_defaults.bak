@@ -1,0 +1,34 @@
+;
+; This file contains default values for the seasonal metrics
+; smoother interface.
+;
+
+;
+; Smoother options
+;
+; Note: swin_def, Season Window, is given by bands per year
+;       in the original input information
+pp_def    = 0.3		; Peak Percentage
+ps_def    = 1		; Peaks Per Season
+nmin_def  = -0.1        ; Minimum NDVI
+rwin_def  = 5 		; Regression Window
+cwin_def  = 6 		; Combination Window
+pwght_def = 1.5 	; Peak Weights
+swght_def = 0.5 	; Slope Weights
+vwght_def = 0.05 	; Valley Weights
+
+;
+; Plotter Options
+;
+ShowText_def = ["Smoothed", "Raw Data", "Text", $
+                "F Avg", "B Avg", $
+                "SOS", "EOS"]
+ShowBut_def = [1,1,1,0,0,1,1]
+
+;
+; Metrics Options
+;
+swl_def = 12		; Start of Season Window Length
+ewl_def = 12		; End of Season Window Length
+
+

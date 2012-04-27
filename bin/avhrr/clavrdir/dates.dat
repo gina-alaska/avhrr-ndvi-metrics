@@ -1,0 +1,6 @@
+;
+;  dat is the julian dates for the middle of each month used
+;  for interpolating values for specific date in CLAVR
+;
+
+dat = [-15,15, 46, 74,  105,135,166,196,227,  258,288,319,349,380]

@@ -1,0 +1,46 @@
+FUNCTION ApplyPSF, kernel, imagename, band, NSIn, NLIn, DTIn, PixSpaceX, PixSpaceY, subddr
+
+KerSize=Size(kernel)
+n = KerSize[1]
+
+xinc=PixSpaceX
+yinc=PixSpaceY
+
+image=bandread(imagename, band, nsin, nlin, dt=dtin)
+
+
+
+ns = fix((nsin-n)/xinc)
+nl = fix((nlin-n)/yinc)
+print, "NS:"+strcompress(ns), "   NL:"+strcompress(nl)
+
+subddr=ddrspace(1)
+subddr.ns=ns
+subddr.nl=nl
+subddr.dt=dtin
+
+subimage = fltarr(ns,nl)
+
+for il = 0L, nl-1 DO BEGIN
+
+   for is = 0L, ns-1 DO BEGIN
+
+      Win = image[is*xinc:is*xinc+n-1, il*yinc:il*yinc+n-1]
+      subimage[is,il]=total(kernel*float(win))
+
+   ENDFOR
+if il mod 10 eq 0 then print, "Processed Line:",il
+ENDFOR
+
+
+print, "MIN:",min(subimage)
+print, "MAX:",max(subimage)
+
+case(dtin) of
+1: Return, byte(round_to(subimage,1))
+2: Return, fix(round_to(subimage,1))
+3: Return, long(round_to(subimage,1))
+4: Return, subimage
+else:
+ENDCASE
+END 

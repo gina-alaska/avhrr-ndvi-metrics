@@ -1,0 +1,33 @@
+This directory contains the modularized components
+of the CLAVR (CLouds from AVhrR) cloud detection
+algorithm.
+
+The cloud tests are:
+
+rgct.pro - Reflective Gross Cloud Test
+
+rrct.pro - Reflective Ration Cloud Test (actually this has been
+           replaced by an NDVI test).
+
+c3at.pro - Channel 3 Albedo Test
+
+fmft.pro - Four Minus Five Test
+
+tgct.pro - Thermal Gross Cloud Test
+
+
+Associated with each test is an array of threshold values.
+These thresholds are different for each dataset.  The threshold
+arrays can be found in the following files.
+
+tg96.dat - Tallgrass NOAA-14 1996 512x512 dataset
+tg94.dat - Tallgrass NOAA-11 1994 100x100 dataset
+nb94.dat - Niobrara  NOAA-11 1994 100x100 dataset
+
+
+The thresholds in the above data files need to be interpolated
+by date.  The array 'dat' contains the Julian day of the middle
+of each month in order to do this interpolation.  The following
+file is sourced in each of the tests:
+
+dates.dat 

@@ -1,0 +1,49 @@
+PRO get_file_info_event, ev
+
+  type = tag_names(ev, /structure)
+  if (type eq 'WIDGET_BUTTON') then begin
+      WIDGET_CONTROL,ev.top,get_uvalue=new_info
+      WIDGET_CONTROL,new_info.bg,GET_VALUE=dtype
+      WIDGET_CONTROL,new_info.bg2,GET_VALUE=bpery
+      WIDGET_CONTROL,new_info.t1,GET_VALUE=ns
+      WIDGET_CONTROL,new_info.t2,GET_VALUE=nl
+      WIDGET_CONTROL,new_info.t3,GET_VALUE=nb
+      WIDGET_CONTROL,ev.top,/destroy
+      ns = fix(ns(0))
+      nl = fix(nl(0))
+      nb = fix(nb(0))
+      dtype = dtype + 1
+
+      *new_info.ptr = {ns:ns,nl:nl,nb:nb,dtype:dtype,bpery:bpery}
+  endif;widget_button
+END;get_file_info_event
+
+
+FUNCTION get_file_info, file
+
+  ptr = ptr_new(/allocate)
+
+  gbase = widget_base(/column,title='FILE INFO')
+  label = widget_label(gbase,value=file)
+  col = widget_base(gbase,/frame,/col)
+  bg = cw_bgroup(col,['Byte','Integer'],/exclusive,/frame,$
+		uvalue='dtype',label_top='DATA TYPES:',/row      ,set_value=1)
+  bg2 = cw_bgroup(col,['Dekadal','Bi-weekly'],/exclusive,/frame,$
+		uvalue='bpery',/row                              ,set_value=0)
+  row1 = widget_base(gbase,/row)
+  l1 = widget_label(row1,value='SAMPLES:')
+  t1 = widget_text(row1,value='50',uvalue='nums_s',xsize=10,/edit)
+  row2 = widget_base(gbase,/row)
+  l2 = widget_label(row2,value='LINES:  ')
+  t2 = widget_text(row2,value='50',uvalue='nums_l',xsize=10,/edit)
+  row3 = widget_base(gbase,/row)
+  l3 = widget_label(row3,value='BANDS:')
+  t3 = widget_text(row3,value='432',uvalue='nums_b',xsize=10,/edit)
+  quit = widget_button(gbase,uvalue='done',value='ACCEPT')
+
+  widget_control,/realize,gbase,tlb_set_xoffset=30,tlb_set_yoffset=30
+  widget_control,gbase,set_uvalue={bg:bg,bg2:bg2,t1:t1,t2:t2,t3:t3,ptr:ptr}
+  xmanager,'get_file_info',gbase,event_handler='get_file_info_event'
+
+  return,*ptr
+END;get_file_info

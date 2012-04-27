@@ -1,0 +1,494 @@
+PRO FSZView_event, ev
+
+Widget_Control, ev.id, Get_UValue=UValue
+Widget_Control, ev.top, Get_UValue=mLocal
+
+
+CASE (UValue) OF
+
+;=== WFULLDRAW ===
+
+   'wFullDraw': BEGIN
+
+       IF(mlocal.fbutton lt 0) then mlocal.fbutton = 0
+       Widget_Control, mLocal.wFullDraw, Get_Value=wfd
+       wSet, wfd
+
+       x = (0 > ev.x) < (mLocal.mImage.ns-1)
+       y = (0 > (mLocal.mImage.nl-ev.y-1)) < (mLocal.mImage.nl - 1)
+
+
+       Widget_Control, mLocal.awField[0], Set_Value= x
+       Widget_Control, mLocal.awField[1], Set_Value= y
+       Widget_Control, mLocal.awField[2], Set_Value=fix(mLocal.mImage.Image(x,y))
+  
+       Widget_Control, mLocal.wZoomSlide, Get_Value= ZoomX
+
+       mFulBox = mLocal.mFulBox
+;       fullzoom = round_to(mLocal.mRedBox.XWinSize/ZoomX, 2) > mLocal.mFulBox.XWinSize
+       fullzoom = round_to(mLocal.ZoomWinSz/ZoomX, 2) < $
+                   (mLocal.mFulBox.XWinSize < mLocal.mFulBox.YWinSize)
+       halfzoom = fullzoom/2
+       Get_Box, ev.x, ev.y, mFulBox, halfzoom
+       mLocal.mFulBox = mFulBox
+
+       IF(mLocal.mFulBox.XCenter EQ -1) THEN mLocal.mFulBoxOld = mLocal.mFulBox
+
+; Move the box to the current location
+      IF(ev.press eq 1 ) then BEGIN
+         mlocal.fbutton = 1
+         Draw_Box, mLocal.mFulBox, mLocal.mFulBoxOld
+         mLocal.mFulBoxOld = mLocal.mFulBox
+
+         mLocal.ZoomImgSz = mLocal.ZoomWinSz < (mLocal.mImage.ns > mLocal.mImage.nl)*ZoomX
+
+
+         ZXUL = (0 > (x - halfzoom)) < (mLocal.mImage.ns - fullzoom)
+         ZYUL = (0 > (y - halfzoom)) < (mLocal.mImage.nl - fullzoom)
+
+         Zimg = congrid(mLocal.mImage.Image(ZXUL:ZXUL+fullzoom-1, ZYUL:ZYUL+fullzoom-1), $
+               mLocal.ZoomImgSz, mLocal.ZoomImgSz)
+;              mLocal.ZoomWinSz,mLocal.ZoomWinSz)
+;              mLocal.mRedBox.XWinSize,mLocal.mRedBox.YWinSize)
+
+         zxoff= (0> (mLocal.ZoomWinSz-mLocal.ZoomImgSz))/2
+         zyoff= (0> (mLocal.ZoomWinSz-mLocal.ZoomImgSz))/2
+
+         Widget_Control, mLocal.wZoomDraw, Get_Value=wzd
+         wSet,wzd
+         if (mLocal.ZoomImgSz lt mLocal.ZoomWinSz) THEN $
+            tvscl, bytarr(mLocal.ZoomWinSz, mLocal.ZoomWinSz) ; Blank out window
+         tvscl,zimg, zxoff, zyoff
+      end;press event
+
+; If button is down and I'm moving, move the box
+      IF(ev.type eq 2 and mlocal.fbutton eq 1)then begin
+         Draw_Box, mLocal.mFulBox, mLocal.mFulBoxOld
+         mLocal.mFulBoxOld = mLocal.mFulBox
+         mLocal.ZoomImgSz = mLocal.ZoomWinSz < (mLocal.mImage.ns > mLocal.mImage.nl)*ZoomX
+
+         ZXUL = (0 > (x - halfzoom)) < (mLocal.mImage.ns - fullzoom)
+         ZYUL = (0 > (y - halfzoom)) < (mLocal.mImage.nl - fullzoom)
+         Zimg = congrid(mLocal.mImage.Image(ZXUL:ZXUL+fullzoom-1, ZYUL:ZYUL+fullzoom-1), $
+               mLocal.ZoomImgSz, mLocal.ZoomImgSz)
+;              mLocal.ZoomWinSz,mLocal.ZoomWinSz)
+;              mLocal.mRedBox.XWinSize,mLocal.mRedBox.YWinSize)
+
+
+         zxoff= (0> (mLocal.ZoomWinSz-mLocal.ZoomImgSz))/2
+         zyoff= (0> (mLocal.ZoomWinSz-mLocal.ZoomImgSz))/2
+
+         Widget_Control, mLocal.wZoomDraw, Get_Value=wzd
+         wSet,wzd
+         tvscl,zimg, zxoff, zyoff
+      end;press plus motion event
+
+; IF SCROLL BARS ARE MOVED, MOVE BOX IN REDUCED VIEW
+      IF(ev.type EQ 3) THEN BEGIN 
+
+; Get Center of reduced box and calculate box
+          redoff = mLocal.mRedBox.ImgOffset
+          reddim = mLocal.mRedbox.ImgSize
+          FullWinSz = mLocal.mFulBox.XWinSize
+          red2ful = float(mLocal.mImage.ns > mLocal.mImage.nl)/(max(reddim))
+          halfred = FullWinSz / red2ful /2.
+          Widget_Control, mLocal.wFullDraw, Get_Draw_View=viewloc
+          xvloc=(viewloc[0]/red2ful)+redoff[0]
+          yvloc=(viewloc[1]/red2ful)+redoff[1]
+
+          mRedBox = mLocal.mRedBox
+          Get_Box, round(xvloc+halfred), $
+                   round(yvloc+halfred), mRedBox, halfred
+          mLocal.mRedBox = mRedBox
+          IF(mLocal.mRedBox.XCenter EQ -1) THEN mLocal.mRedBoxOld = mLocal.mRedBox
+
+          Widget_Control, mLocal.wReduceDraw, Get_Value=wrd
+          wSet, wrd
+
+          Draw_Box, mLocal.mRedBox, mLocal.mRedBoxOld
+          mLocal.mRedBoxOld = mLocal.mRedBox
+      ENDIF
+
+      Widget_Control, mLocal.wFullDraw, /Draw_Motion_Events, /Draw_Viewport_Events
+
+; Point Selected
+      IF (ev.release EQ 1) THEN BEGIN
+          mlocal.fbutton = 0
+
+          nawField = n_elements(mLocal.awField)/2
+          Widget_Control, mLocal.awField[nawField], Set_Value= x
+          Widget_Control, mLocal.awField[nawField+1], Set_Value= y
+          Widget_Control, mLocal.awField[nawField+2], Set_Value=fix(mLocal.mImage.Image(x,y))
+          Widget_Control, mLocal.wFullDraw, /Draw_Motion_Events
+
+; TRY TO CALL PLOT_PNT WIDGET FROM SMOOTHER
+;xyArgs = [X, Y]
+;argEvent = {plot_pnt,  $
+;           Id: mLocal.wFullDraw, $
+;           Top: mLocal.wFullDraw, $
+;           Handler: 
+;Widget_Control, wBase, Set_UValue=mLocal, Event_Pro='FSZView_event'
+      ENDIF
+
+    END;wFullDraw
+
+;=== WREDUCEDRAW ===
+
+   'wReduceDraw': BEGIN
+      IF(mlocal.sbutton lt 0) then mlocal.sbutton = 0
+
+      redoff = mLocal.mRedBox.ImgOffset
+      reddim = mLocal.mRedbox.ImgSize
+      FullWinSz = mLocal.mFulBox.XWinSize
+      red2ful = float(mLocal.mImage.ns > mLocal.mImage.nl)/(max(reddim))
+      halfred = FullWinSz / red2ful /2.
+
+      Widget_Control, mLocal.wReduceDraw, Get_Value=wrd
+      wSet, wrd
+
+; Get position in reduced image
+      xred = ev.x 
+      xred = long((xred - (redoff[0] < xred)) < reddim[0])
+      yred = mLocal.mRedBox.YWinSize-ev.y-1  
+      yred = long((yred - (redoff[1] < yred)) < reddim[1])
+
+; Scale that position to the full res image
+      x0 = round(xred*red2ful) < (mLocal.mImage.ns - 1)
+      y0 = round(yred*red2ful) < (mLocal.mImage.nl - 1)
+
+; Locate the lower left corner or our full res image in device coords
+      xF = (x0 - FullWinSz/2) > 0
+      yF = (mLocal.mImage.nl-y0-1 - FullWinSz/2) > 0
+      Widget_Control, mLocal.awField[0], Set_Value= x0
+      Widget_Control, mLocal.awField[1], Set_Value= y0
+      Widget_Control, mLocal.awField[2], Set_Value= fix(mLocal.mImage.Image(x0,y0))
+
+; Get Center of reduced box and calculate box
+      mRedBox = mLocal.mRedBox
+      Get_Box, ev.x, ev.y, mRedBox, halfred
+      mLocal.mRedBox = mRedBox
+
+      IF(mLocal.mRedBox.XCenter EQ -1) THEN mLocal.mRedBoxOld = mLocal.mRedBox
+
+
+; Move the box to the current location
+      IF(ev.press eq 1 ) then BEGIN
+         mlocal.sbutton = 1
+         Draw_Box, mLocal.mRedBox, mLocal.mRedBoxOld
+         mLocal.mRedBoxOld = mLocal.mRedBox
+      end;press event
+
+
+; If button is down and I'm moving, move the box
+      IF(ev.type eq 2 and mlocal.sbutton eq 1)then begin
+         Draw_Box, mLocal.mRedBox, mLocal.mRedBoxOld
+         mLocal.mRedBoxOld = mLocal.mRedBox
+if (mlocal.scroll) then $
+         Widget_Control, mLocal.wFullDraw, Set_Draw_View=[xF,yF]
+      end;press plus motion event
+
+; If button1 is clicked set fields and show full res
+      IF(ev.release eq 1) THEN BEGIN
+         mlocal.sbutton = 0
+
+         nawField = n_elements(mLocal.awField)/2 
+;         Widget_Control, mLocal.awField[nawField], Set_Value= x0
+;         Widget_Control, mLocal.awField[nawField+1], Set_Value= y0
+;         Widget_Control, mLocal.awField[nawField+2], Set_Value=fix(mLocal.mImage.Image(x0,y0))
+         Widget_Control, mLocal.wFullDraw, /Draw_Motion_Events
+if (mlocal.scroll) then $
+         Widget_Control, mLocal.wFullDraw, Set_Draw_View=[xF,yF]
+
+
+
+
+      ENDIF; release event
+
+
+    END;wReduceDraw
+
+
+;=== WREDUCESLIDE ===
+
+    'wReduceSlide': BEGIN
+       Widget_Control,mLocal.wReduceSlide, Get_Value=band
+       Widget_Control, mLocal.wFullDraw, Get_Value=wfd
+       Widget_Control, mLocal.wReduceDraw, Get_Value=wrd
+       mLocal.mImage.cb = band
+       mImage = mLocal.mImage
+       mLocal.mImage.Image=bandread(mImage.file, band, mImage.ns, mImage.nl, DTYPE=mImage.dt) 
+
+       IF(mLocal.mFulBox.XCenter EQ -1) THEN mLocal.mFulBoxOld = mLocal.mFulBox
+
+       reddim = mLocal.mRedbox.ImgSize
+       imgred=reduceread(mImage.file, reddim(0), reddim(1), band,mImage.ns, mImage.nl, DTYPE=mImage.dt)
+
+
+       wSet, wrd
+       Draw_Box, mLocal.mRedBox, mLocal.mRedBoxOld, /erase
+       tvscl, imgred, mLocal.mRedBox.ImgOffset(0), mLocal.mRedBox.ImgOffset(1)
+       Draw_Box, mLocal.mRedBox, mLocal.mRedBoxOld, /new
+
+       wSet, wfd
+       Draw_Box, mLocal.mFulBox, mLocal.mFulBoxOld, /erase
+       tvscl, mLocal.mImage.Image
+       Draw_Box, mLocal.mFulBox, mLocal.mFulBoxOld, /new
+
+       Widget_Control, mLocal.wReduceSlide, Set_Value=band
+
+    END;wReduceSlide 
+
+
+;=== WZOOMDRAW ===
+
+    'wZoomDraw': BEGIN
+
+
+       IF(mlocal.fbutton ge 0) THEN BEGIN
+          nawField = n_elements(mLocal.awField)/2 
+          Widget_Control, mLocal.awField[nawField], Get_Value=ZXCenter
+          Widget_Control, mLocal.awField[nawField+1], Get_Value=ZYCenter
+          Widget_Control, mLocal.wZoomSlide, Get_Value=ZoomX
+
+          ZX = ev.x 
+          ZY = mLocal.ZoomWinSz-ev.y-1 
+          XHalf = mLocal.ZoomWinSz/2./ZoomX
+          YHalf = mLocal.ZoomWinSz/2./ZoomX
+;          ZY = mLocal.mRedBox.YWinSize-ev.y-1 
+;          XHalf = mLocal.mRedBox.XWinSize/2./ZoomX
+;          YHalf = mLocal.mRedBox.YWinSize/2./ZoomX
+
+          ZXCenter = floor((XHalf > ZXCenter) < (mLocal.mImage.ns - XHalf))
+          ZYCenter = floor((YHalf > ZYCenter) < (mLocal.mImage.nl - YHalf))
+
+          x = ZXCenter + floor((ZX-mLocal.ZoomImgSz/2.)/ZoomX)
+          y = ZYCenter + floor((ZY-mLocal.ZoomImgSz/2.)/ZoomX)
+;          x = ZXCenter + floor((ZX-mLocal.mRedBox.XWinSize/2.)/ZoomX)
+;          y = ZYCenter + floor((ZY-mLocal.mRedBox.YWinSize/2.)/ZoomX)
+
+          x = (0 > x) < (mLocal.mImage.ns -1)
+          y = (0 > y) < (mLocal.mImage.nl -1)
+
+          Widget_Control, mLocal.awField[0], Set_Value= x
+          Widget_Control, mLocal.awField[1], Set_Value= y
+          Widget_Control, mLocal.awField[2], Set_Value= fix(mLocal.mImage.Image(x,y))
+
+          IF(ev.release eq 1) then begin
+;             Widget_Control, mLocal.awField[nawField], Set_Value= x
+;             Widget_Control, mLocal.awField[nawField+1], Set_Value= y
+;             Widget_Control, mLocal.awField[nawField+2], Set_Value= fix(mLocal.mImage.Image(x,y))
+
+             
+
+
+             if (NOT Widget_Info(mLocal.mParent.wSmoother, /Valid_ID)) THEN $
+                        mLocal.mParent.wSmoother = Smoother(mLocal.mParent)
+
+             Widget_Control, mLocal.mParent.wBase, Set_UValue=mLocal.mParent
+
+;print, "IN WZOOMDRAW, EV.top:", ev.top
+             FakeEvent = {WZOOMDRAW, $
+                          id: ev.id, $
+                          top: ev.top, $
+                          handler: mLocal.mParent.wSmoother, $
+                          x: x, $
+                          y: y }
+
+             Widget_Control, mLocal.mParent.wSmoother, Send_Event=FakeEvent
+
+          END; ev.release
+
+       END; fbutton
+
+    END; wZoomDraw
+
+;=== WZOOMSLIDE ===
+
+    'wZoomSlide': BEGIN
+       Widget_Control, mLocal.wZoomSlide, Get_Value=ZoomX
+       Widget_Control, mLocal.wZoomSlide, Set_Value=ZoomX
+;       Widget_Control, mLocal.wFullDraw, Get_Value=wfd
+;       Widget_Control, mLocal.awField[3], Get_Value=x
+;       Widget_Control, mLocal.awField[4], Get_Value=y
+;       wSet, wfd
+;       Draw_Box, mLocal.mFulBox, mLocal.mFulBoxOld, /erase
+;
+;       mFulBox = mLocal.mFulBox
+;       fullzoom = round_to(mLocal.mRedBox.XWinSize/ZoomX, 2)
+;       halfzoom = fullzoom/2
+;print, halfzoom
+;print, mFulBox.XBox
+;print, mFulBox.XCenter, mFulBox.YCenter
+;       Get_Box, x, y, mFulBox, halfzoom
+;       mLocal.mFulBox = mFulBox
+;       mLocal.mFulBoxOld = mFulBox
+;print, mFulBox.XBox
+;print, mFulBox.XCenter, mFulBox.YCenter
+;       Draw_Box, mLocal.mFulBox, mLocal.mFulBoxOld, /new
+;
+
+
+    END; wZoomSlide
+
+    ELSE:
+ENDCASE   
+
+
+IF (Widget_Info(ev.top, /Valid_ID)) THEN $
+   Widget_Control, ev.top, Set_UValue=mLocal
+
+END
+
+
+
+
+;====================;
+; WIDGET DEFINITION  ;
+;====================;
+FUNCTION FSZView, mParent
+;!p.background=rgb(172,172,172)
+OldBackground = !p.Background
+!p.background=rgb(120,140,140)
+
+;INPUTS
+if (mParent.minfo.file EQ '') THEN mParent.minfo = Open_File()
+mInfo = mParent.mInfo
+
+device, Get_Screen_Size=ScreenSize
+
+
+
+;WORKING WITH INPUTS
+FullWinSz = (ScreenSize(1)/2 - 20) < (minfo.nl > minfo.ns)
+if(FullWinSz eq max([minfo.nl, minfo.ns])) then scroll = 0 $
+ELSE scroll=1
+
+;FullWinSz = (ScreenSize(1)/2 - 20) < (minfo.nl > minfo.ns)
+
+ZoomWinSz = (FullWinSz /2) > ((ScreenSize(1)/2 - 20)/2)
+RedWinSz= (mInfo.ns > mInfo.nl) < ZoomWinSz
+
+img=bandread(minfo.file,0,minfo.ns, minfo.nl, dtype=minfo.dt)
+
+maxdim=max([minfo.ns, minfo.nl])
+reddim=scale([minfo.ns, minfo.nl], max=maxdim,min=0, xmax=RedWinSz,xmin=0)
+reddim=round_to(reddim, 1)
+RedWinSz=fix(RedWinSz)
+
+
+imgred=reduceread(minfo.file, reddim(0), reddim(1), 0,minfo.ns, minfo.nl, DTYPE=minfo.dt)
+xredoff=(RedWinSz-reddim(0))/2
+yredoff=(RedWinSz-reddim(1))/2
+redoff=long([xredoff, yredoff])
+
+
+;=================
+
+wBase = Widget_Base(Title="Image View",/Column,/Base_Align_Center, $
+                    Group_Leader=mParent.wBase)
+
+label=Widget_Label(wBase, value="Full Resolution")
+wFullDraw = Widget_Draw(wBase, $
+             XSize=minfo.ns, YSize=minfo.nl, /Motion_Events,$
+             Scroll=scroll, Scr_XSize=FullWinSz < minfo.ns, $
+             Scr_YSize=FullWinSz<minfo.nl,$
+             /Button_Events, /Frame, UValue='wFullDraw')
+
+wPosText = Widget_Base(wBase, Row=2,/Frame,/Base_Align_Center)
+asText=["X   :","Y   : ","DN  :", "X0 :","Y0 : ","DN0:"]
+nasText=N_Elements(asText)
+
+awField=LonArr(nasText, N_Elements(wPosText))
+
+FOR i = 0, N_Elements(awField)-1 DO BEGIN
+   awField[i] = CW_Field(wPosText,Value=0.0,tITle=asText[i],/Integer,XSize=6)
+END
+
+wBottom = Widget_Base(wBase, /Row)
+wBottomL = Widget_Base(wBottom, /Column,/Frame, /Base_Align_Center)
+wBottomR = Widget_Base(wBottom, /Column,/Frame)
+
+label=Widget_Label(wBottomL, Value="Reduced Image")
+wReduceDraw = Widget_Draw(wBottomL, XSize = RedWinSz, YSize=RedWinSz, /Motion_Events, $
+              /Button_Events, /Frame, UValue='wReduceDraw')
+if minfo.nb gt 1 then $
+  wReduceSlide= Widget_Slider(wBottomL, value=0, minimum=0, maximum=minfo.nb-1, scroll=1,$
+              title="Display Band:", XSize=ZoomWinSz, UValue='wReduceSlide') $
+ELSE wReduceSlide=-1
+
+label=Widget_Label(wBottomR, Value="Zoomed Image")
+wZoomDraw = Widget_Draw(wBottomR, XSize = ZoomWinSZ, YSize=ZoomWinSZ, /Motion_Events, $
+              /Button_Events, /Frame, UValue='wZoomDraw')
+wZoomSlide= Widget_Slider(wBottomR, value=2, minimum=2, maximum=16, scroll=1,$
+              title="Zoom Factor:", UValue='wZoomSlide') 
+
+
+Widget_Control, wBase, /realize
+
+Widget_Control, wFullDraw, Get_Value=wfd
+Widget_Control, wReduceDraw, Get_Value=wrd
+Widget_Control, wZoomDraw, Get_Value=wzd
+
+wSet, wrd
+tvscl,imgred,xredoff,yredoff
+
+
+wSet, wfd
+tvscl,img 
+
+mImage={file:minfo.file, image: img, $
+        ns:minfo.ns, nl:minfo.nl, nb:minfo.nb, dt:minfo.dt, $
+        cb: 0, bname: 'NDVI'}
+
+;mBox = {XCenter:-1L, YCenter: -1L, $
+;        XWinSize:-1L, YWinSize:-1L, $
+;        XBox:intarr(5), YBox:intarr(5), $
+;        ImgOffset: intarr(2), ImgSize:intarr(2)}
+
+mRedBox = {mBox}
+mFulBox = {mBox}
+
+;mRedBox.XWinSize = ZoomWinSz
+;mRedBox.YWinSize = ZoomWinSz
+mRedBox.XWinSize = RedWinSz
+mRedBox.YWinSize = RedWinSz
+mRedBox.ImgOffset = redoff
+mRedBox.ImgSize = reddim
+
+mFulBox.XWinSize = FullWinSz < mInfo.ns
+mFulBox.YWinSize = FullWinSz < mInfo.nl
+mFulBox.ImgOffset = [0,0]
+mFulBox.ImgSize = [mImage.ns, mImage.nl]
+
+mRedBoxOld=mRedBox
+mFulBoxOld=mFulBox
+
+mParent.wFSZView = wBase
+mLocal = {mParent: mParent, $
+          mImage: mImage, $
+          mRedBox: mRedBox, $
+          mFulBox: mFulBox, $
+          mRedBoxOld: mRedBoxOld, $
+          mFulBoxOld: mFulBoxOld, $
+          wBase: wBase, $
+          wFullDraw: wFullDraw, $
+          wReduceDraw: wReduceDraw, $
+          wReduceSlide: wReduceSlide, $
+          wZoomDraw: wZoomDraw, $
+          wZoomSlide: wZoomSlide, $
+          awField: awField, $
+          sbutton:-1L, $
+          fbutton:-1L, $
+          scroll:scroll, $
+          ZoomWinSz:ZoomWinSz, $
+          ZoomImgSz:-1L $
+         }
+wSet, wfd
+Widget_Control, wBase, Set_UValue=mLocal, Event_Pro='FSZView_event'
+XManager, 'fszview', wbase, Event_Handler='fszview_event', /No_Block
+
+!p.Background = OldBackground
+
+Return, wBase
+
+END

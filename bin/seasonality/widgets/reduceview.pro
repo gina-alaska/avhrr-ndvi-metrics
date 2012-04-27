@@ -1,0 +1,432 @@
+;---------------------------------------------------------------------------
+; Author: Manuel J. Suarez
+; $RCSfile$
+; $Revision$
+; Orig: 1999/05/08 14:58:51
+; $Date$
+;---------------------------------------------------------------------------
+; Module:
+; Purpose:
+; Functions:
+; Procedures:
+; Calling Sequence:
+; Inputs:
+; Outputs:
+; Keywords:
+; History:
+;---------------------------------------------------------------------------
+; $Log$
+;---------------------------------------------------------------------------
+
+;=================================;
+; EVENT HANDLER: REDUCEVIEW_EVENT ;
+;=================================;
+PRO ReduceView_Event, ev
+   Widget_Control, ev.id, Get_UValue=UValue
+   Widget_Control, ev.top, Get_UValue=mLocal
+
+
+; ========= Motion Send Position and Cover Event =========
+   ReduceView_Motion, ev
+
+; Left Mouse Button Pressed
+   IF (ev.press eq 1) THEN ReduceView_Left_Button_Press, mLocal, ev
+
+; Left Mouse Button Released
+   IF (ev.release eq 1) THEN ReduceView_Left_Button_Release, mLocal
+
+; Left Mouse Button Click and Drag
+   IF (ev.type EQ 2 and mLocal.MouseClick[0] EQ 1) THEN $
+       ReduceView_Left_ClickAndDrag, mLocal, ev
+
+; Right Mouse Button Pressed
+;   IF (ev.press EQ 4) THEN FullView_Right_Button_Press, mLocal
+   IF (ev.press eq 4) THEN BEGIN
+   mLocal.MapSlider=abs(mLocal.MapSlider-1)
+   Widget_Control, mLocal.wSlideBase, Map=mLocal.MapSlider
+   END
+
+   Widget_Control, ev.top, Set_UValue=mLocal
+
+END; ReduceView_Event
+
+;=======================;
+; EVENT HANDLER: MOTION ;
+;=======================;
+PRO ReduceView_Motion, ev
+   Widget_Control, ev.top, Get_UValue=mLocal
+
+; ========= FAKE EVENT TO SEND TO POSITION MONITOR =========
+
+      Widget_Control, mLocal.wParent, Get_UValue=mParent
+      Widget_Control, mParent.wParent, Get_UValue=mGParent
+      Widget_Control, mGParent.wOpenFile, Get_UValue=mInfo
+
+       x = (0 > ev.x*mLocal.ZoomOut) < (mInfo.ns-1)
+       y = (0 > (mInfo.nl-ev.y*mLocal.ZoomOut-1)) < (mInfo.nl - 1)
+
+      FakeEvent={WIMAGE $
+                , id: ev.id $
+                , top: ev.top $
+                , handler: mGParent.wPosition $
+                , x: x $
+                , y: y $
+                }
+
+      if(Widget_Info(mGParent.wPosition, /Valid_ID)) THEN $
+         Widget_Control, mGParent.wPosition, Send_Event=FakeEvent
+
+
+; ========= FAKE EVENT TO SEND TO COVER TYPE MONITOR =========
+      value=long(mParent.Image[x,y])
+      CASE (mParent.mClassInfo.attExist) OF
+         0: cover='<NO DATA>'
+         1: BEGIN
+               covervalue=long(mParent.mClassInfo.lccImage[x,y])
+               cover=mParent.mClassInfo.attTable[covervalue]
+            END
+         ELSE:
+      ENDCASE
+      FakeEvent={WCOVERMOTION $
+                , id: ev.id $
+                , top: ev.top $
+                , handler: mGParent.wCoverType $
+                , x: x $
+                , y: y $
+                , value:value $
+                , cover:cover $
+                }
+
+      if(Widget_Info(mGParent.wCoverType, /Valid_ID)) THEN $
+         Widget_Control, mGParent.wCoverType, Send_Event=FakeEvent
+
+
+
+   Widget_Control, mLocal.wParent, Set_UValue=mParent
+   Widget_Control, ev.top, Set_UValue=mLocal
+END; ReduceView_Motion
+
+;==================================;
+; EVENT HANDLER: LEFT_BUTTON_PRESS ;
+;==================================;
+PRO ReduceView_Left_Button_Press, mLocal, ev
+
+      Widget_Control, mLocal.wReduceView, Get_Value=wrd
+      wSet, wrd
+      mLocal.MouseClick[0]=1
+
+;
+; UPDATE BOX
+;
+      mbox=mLocal.mReduceBox       ; MJS-For some reason you can't send
+      GetBox, ev.x, ev.y, mBox         ;     in mbox.mReduceBox
+      mLocal.mReduceBox=mbox
+
+      Draw_Box, mLocal.mReduceBox, mLocal.mReduceBoxOld, /Dev
+      mLocal.mReduceBoxOld = mLocal.mReduceBox
+      Widget_Control, mLocal.wParent, TLB_GET_SIZE=TLBSize, Get_UValue=FullView
+
+
+;
+; RESET LOCATION IN FULL VIEW
+;
+      Widget_Control, mLocal.wParent, Get_UValue=Parent
+
+      XinFullView=(ev.x*mLocal.ZoomOut) < (Parent.mFullBox.ImgSize[0]-1)
+      YinFullView=(ev.y*mLocal.ZoomOut) < (Parent.mFullBox.ImgSize[1]-1)
+
+      XFullCorner = (XinFullView - Parent.mFullBox.XWinSize/2) > 0
+      YFullCorner = (YinFullView - Parent.mFullBox.YWinSize/2) > 0
+
+      Widget_Control, Parent.wFullView, Set_Draw_View=[XFullCorner,YFullCorner]
+      Widget_Control, mLocal.wParent, Set_UValue=Parent
+
+
+
+END; ReduceView_Left_Button_Press, mLocal
+
+;===========================================;
+; EVENT HANDLER: LEFT_BUTTON_CLICK_AND_DRAG ;
+;===========================================;
+PRO ReduceView_Left_ClickAndDrag, mLocal, ev
+
+;
+; UPDATE BOX
+;
+      Widget_Control, mLocal.wReduceView, Get_Value=wrd
+      wSet, wrd
+      mbox=mLocal.mReduceBox           ; MJS-For some reason you can't send
+      GetBox, ev.x, ev.y, mBox         ;     in mbox.mReduceBox
+      mLocal.mReduceBox=mbox
+      Draw_Box, mLocal.mReduceBox, mLocal.mReduceBoxOld, /Dev
+      mLocal.mReduceBoxOld = mLocal.mReduceBox
+
+
+;
+; RESET LOCATION IN FULL VIEW
+;
+      Widget_Control, mLocal.wParent, Get_UValue=Parent
+
+      XinFullView=(ev.x*mLocal.ZoomOut) < (Parent.mFullBox.ImgSize[0]-1)
+      YinFullView=(ev.y*mLocal.ZoomOut) < (Parent.mFullBox.ImgSize[1]-1)
+
+      XFullCorner = (XinFullView - Parent.mFullBox.XWinSize/2) > 0
+      YFullCorner = (YinFullView - Parent.mFullBox.YWinSize/2) > 0
+
+      Widget_Control, Parent.wFullView, Set_Draw_View=[XFullCorner,YFullCorner]
+      Widget_Control, mLocal.wParent, Set_UValue=Parent
+
+
+END; ReduceView_Left_Button_Release, mLocal
+
+;====================================;
+; EVENT HANDLER: LEFT_BUTTON_RELEASE ;
+;====================================;
+PRO ReduceView_Left_Button_Release, mLocal
+   mLocal.MouseClick[0]=0
+END; ReduceView_Left_Button_Release, mLocal
+
+;===================================;
+; EVENT HANDLER: REDUCESLIDER_EVENT ;
+;===================================;
+PRO ReduceSlider_Event, ev
+
+   Widget_Control, ev.top, Get_UValue=mLocal
+   NSR=mLocal.mReduceBox.ImgSize[0]
+   NLR=mLocal.mReduceBox.ImgSize[1]
+
+   Widget_Control, mLocal.wReduceView, Get_Value=wrd
+
+   Widget_Control, mLocal.wParent, Get_UValue=mParent
+   Widget_Control, mParent.wFullView, Get_Value=wfd
+   Widget_Control, mParent.wParent, Get_UValue=mGParent
+   Widget_Control, mGParent.wOpenFile, Get_UValue=mImageInfo
+   Widget_Control, mLocal.wReduceSlider, Get_Value=CurrentBand
+
+
+; ========= While slider is moving, update label =========
+   IF(ev.drag eq 1 OR ev.drag eq 0) THEN BEGIN
+      Widget_Control, mLocal.wReduceSlider, Get_Value=CurrentBand
+      IF CurrentBand EQ -1L THEN BEGIN
+         SliderLabel='Land Cover'
+         Widget_Control, mLocal.wReduceSliderLabel, Set_Value=SliderLabel[0]
+      END ELSE BEGIN
+         sCurrentBand=strcompress(CurrentBand,/Remove_All)+': '
+         SliderLabel=strcompress(frac2date(float(CurrentBand)/mImageInfo.bpy + $
+                      mImageInfo.StartYear, /CALENDAR))
+         SliderLabel=sCurrentBand+SliderLabel
+         Widget_Control, mLocal.wReduceSliderLabel, Set_Value=SliderLabel[0]
+      END
+   END
+
+
+; ========= When slider stops, update images ===========
+   IF(ev.drag eq 0) THEN BEGIN
+
+      Widget_Control, /HourGlass
+      IF(CurrentBand LT 0) THEN BEGIN
+         mParent.Image=mParent.mClassInfo.lccImage
+      ENDIF ELSE BEGIN
+         mParent.Image=BandRead(mImageInfo.File, CurrentBand, mImageInfo.ns, $
+                       mImageInfo.nl, dt=mImageInfo.dt)
+      END
+      mLocal.ReduceImage=Congrid(mParent.Image, NSR, NLR)
+
+
+   ; ========= Update full res view =========
+      wSet,wfd
+      mInfo=mImageInfo
+      tv, scaleft(mParent.Image, FROM_MIN=mInfo.minVal, FROM_MAX=mInfo.maxVal, TO_MIN=0, TO_MAX=200)
+      Draw_Box, mParent.mFullBox, mParent.mFullBoxOld, /Dev, /ERASE
+
+   ; ========= Update reduced res view =========
+      wSet, wrd
+      CASE (mParent.customColor) OF
+      0: tv, scaleft(mLocal.ReduceImage, FROM_MIN=mInfo.minVal, FROM_MAX=mInfo.maxVal, TO_MIN=0, TO_MAX=200)		;=== MJS 5/27/99 used to be tvscl
+      1: tv, scaleft(mLocal.ReduceImage, FROM_MIN=mInfo.minVal, FROM_MAX=mInfo.maxVal, TO_MIN=0, TO_MAX=200)
+      ELSE:
+      END
+      Draw_Box, mLocal.mReduceBox, mLocal.mReduceBoxOld, /Dev, /ERASE
+
+
+   ; ========= Update color palette =========
+      IF(CurrentBand GE 0 and mParent.NDVIctFile NE '' and $
+                              mParent.customColor) THEN BEGIN
+        lutvar=readct(mParent.NDVIctFile)
+      END
+
+      IF(CurrentBand LT 0 and mParent.mClassInfo.palExist AND $
+                              mParent.customColor) THEN BEGIN
+         lutvar=readct(mParent.mClassInfo.palFile, numColors=160)
+      END
+
+   ; ========= Update Linework =========
+      CASE (mParent.LinesShowing) OF
+         1: BEGIN
+               Widget_Control, mParent.wFullView, Get_Value=wfd
+               Widget_Control, mLocal.wReduceView, Get_Value=wrd
+               DrawLineWork, mParent, [wfd, wrd],[1,mLocal.ZoomOut]
+            END
+         ELSE:
+      END
+
+
+   END
+
+   Widget_Control, mLocal.wParent, Set_UValue=mParent
+   Widget_Control, ev.top, Set_UValue=mLocal
+
+END; ReduceSlider_Event
+
+;=======================;
+; EVENT HANDLER: RESIZE ;
+;=======================;
+PRO ReduceView_Resize_Event, ev
+
+   Widget_Control, ev.id, Get_UValue=UValue
+   Widget_Control, ev.top, Get_UValue=mLocal
+
+   Widget_Control, mLocal.wBase, TLB_Get_Size=TLBSize
+   Widget_Control, mLocal.wReduceView, Scr_XSize=TLBSize[0]
+   Widget_Control, mLocal.wReduceView, Scr_YSize=TLBSize[1]
+
+   Widget_Control, mLocal.wSlideBase, SCR_XSize=TLBSize[0]
+   Widget_Control, mLocal.wReduceSlider, SCR_XSize=TLBSize[0]
+
+   Widget_Control, mLocal.wReduceSlider, Get_Value=ReduceFactor
+   Widget_Control, mLocal.wParent, Get_UValue=parent
+   Parent.mFullBox.XBoxSize=TLBSize[0]/ReduceFactor
+   Parent.mFullBox.YBoxSize=TLBSize[1]/ReduceFactor
+   Widget_Control, mLocal.wParent, Set_UValue=parent
+
+END
+
+;===================;
+; WIDGET DEFINITION ;
+;===================;
+FUNCTION ReduceView, wParent, XSize=XSize, YSize=YSize, Image=Image
+
+   Widget_Control, wParent, Get_UValue=mParent
+   Widget_Control, mParent.wParent, Get_UValue=mGParent
+   Widget_Control, mGParent.wOpenFile, Get_UValue=mImageInfo
+   mInfo=mImageInfo
+   mClassInfo=mParent.mClassInfo
+
+   StartBand=0L-mClassInfo.lccExist
+   EndBand=mImageInfo.nb-1
+
+   IF StartBand EQ -1L THEN $
+      StartLabel='Land Cover' $
+   ELSE $
+      StartLabel=strcompress(frac2date(0.0, /CALENDAR))
+
+;
+; Size Initial Reduced View Window
+;
+   IF(N_Elements(Image) GT 0) THEN BEGIN
+      ImageSize=Size(Image)
+      NS=ImageSize[1]
+      NL=ImageSize[2]
+   END ELSE BEGIN
+      NS=-1L
+      NL=-1L
+   END
+
+   Device, Get_Screen_Size=ScreenSize
+   QuarterScreen=ScreenSize/4
+   NSR=long(NS) & NLR=long(NL) & ZoomOut=2
+   WHILE(NSR*NLR GT ScreenSize[0]*ScreenSize[1]/9 AND NSR GT ScreenSize[0]/4 $
+         AND NLR GT ScreenSize[1]/4) DO BEGIN
+         NSR=NS/ZoomOut
+         NLR=NL/ZoomOut
+         ZoomOut=ZoomOut+1
+   END
+   NSR=NS/ZoomOut
+   NLR=NL/ZoomOut
+   XBoxSize=XSize/ZoomOut
+   YBoxSize=YSize/ZoomOut
+
+   RedWinSize=[NSR, NLR]
+   ReduceImage=Congrid(Image, NSR, NLR)
+
+
+;
+; Set Up Reduced View Widgets
+;
+
+   wBase=Widget_Base(Title='Reduce View', $
+         Event_Pro='ReduceView_Resize_Event', TLB_Frame_Att=11, $
+         Group_Leader=wParent );   , /Tlb_Size_Events)
+
+   wReduceView=Widget_Draw(wBase, XSize=NSR, YSize=NLR, $
+         /Motion_Events, /Button_Events, $
+         Event_Pro='ReduceView_Event')
+   wbaseGeo=Widget_Info(wBase,/Geo)
+
+   Widget_Control, wBase, map=0
+   Widget_Control, wBase, /Realize
+
+
+;
+; Create Band Slider
+;
+   wSlideBase=Widget_Base(wBase, Group_Leader=wBase,$
+         XOffset=0, YOffset=0, /Column, XSize=wBaseGeo.XSize)
+   wReduceSliderLabel=Widget_Label(wSlideBase, Value=StartLabel[0], /Dynamic)
+   wReduceSlider= Widget_Slider(wSlideBase, value=StartBand, $
+         minimum=StartBand, maximum=EndBand, $
+         scroll=1, XSize=wBasegeo.Xsize-5, /Suppress_Value, /Drag)
+
+
+   Widget_Control, wSlideBase, Map=0
+   Widget_Control, wSlideBase, /Realize
+
+   Widget_Control, wReduceView, Get_Value=CurWin
+   wSet=CurWin
+      CASE (mParent.CustomColor) OF
+         0: tv, scaleft(ReduceImage, FROM_MIN=mInfo.minVal, FROM_MAX=mInfo.maxVal, TO_MIN=0, TO_MAX=200)		;=== MJS 5/27/99 used to be tvscl
+         1: tv, scaleft(ReduceImage, FROM_MIN=mInfo.minVal, FROM_MAX=mInfo.maxVal, TO_MIN=0, TO_MAX=200)
+         ELSE:
+      ENDCASE
+
+
+;
+; Initialize Selection Box
+;
+   mReduceBox={mBox}
+   mReduceBox.XWinSize=NSR
+   mReduceBox.YWinSize=NLR
+   mReduceBox.XBoxSize=XBoxSize
+   mReduceBox.YBoxSize=YBoxSize
+   mReduceBox.ImgOffset=[0,0]
+   mReduceBox.ImgSize=[nsr,nlr]
+   mReduceBoxOld=mReduceBox
+
+
+   state={ wParent:wParent $
+         , wBase:wBase $
+         , wReduceView:wReduceView $
+         , wSlideBase:wSlideBase $
+         , wReduceSliderLabel:wReduceSliderLabel $
+         , wReduceSlider:wReduceSlider $
+         , MouseClick:lonarr(3) $
+         , ZoomOut: ZoomOut $
+         , mReduceBox:mReduceBox $
+         , mReduceBoxOld:mReduceBoxOld $
+         , ReduceImage:ReduceImage $
+         , MapSlider:0 $
+         }
+
+   Widget_Control, wBase, Set_UValue=State
+
+
+   XManager, 'ReduceView', wBase, Event_Handler='ReduceView_Resize_Event', $
+             /No_Block
+   XManager, 'ReduceView', wReduceSlider, Event_Handler='ReduceSlider_Event', $
+             /No_Block
+   XManager, 'ReduceView', wReduceView, Event_Handler='ReduceView_Event', $
+             /No_Block
+
+Return, wBase
+END
+

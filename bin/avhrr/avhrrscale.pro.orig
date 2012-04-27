@@ -1,0 +1,30 @@
+;=== AVHRRSCALE =================================
+;  This function unscales AVHRR byte data to
+;  physical units
+;================================================
+
+FUNCTION   avhrrscale, data
+
+xdim = N_ELEMENTS(data(*,0))
+ydim = N_ELEMENTS(data(0,*))
+nbands = ydim/xdim
+chipdim = xdim
+
+datacal = fltarr(xdim, ydim)
+
+rscal=400.
+tscal=2.
+toff=202.5
+
+datacal(*,0     :1*chipdim-1) = data(*,0     :1*chipdim-1)/rscal
+datacal(*,1*chipdim:2*chipdim-1) = data(*,1*chipdim:2*chipdim-1)/rscal
+datacal(*,2*chipdim:3*chipdim-1) = data(*,2*chipdim:3*chipdim-1)/tscal+toff
+datacal(*,3*chipdim:4*chipdim-1) = data(*,3*chipdim:4*chipdim-1)/tscal+toff
+datacal(*,4*chipdim:5*chipdim-1) = data(*,4*chipdim:5*chipdim-1)/tscal+toff
+datacal(*,5*chipdim:6*chipdim-1) = data(*,5*chipdim:6*chipdim-1)/100.-1
+datacal(*,6*chipdim:7*chipdim-1) = 90-data(*,6*chipdim:7*chipdim-1)
+;datacal(*,6*chipdim:7*chipdim-1) = abs(90-data(*,6*chipdim:7*chipdim-1))
+datacal(*,7*chipdim:ydim-1) = data(*,7*chipdim:ydim-1)
+
+return, datacal
+end

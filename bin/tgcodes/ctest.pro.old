@@ -1,0 +1,35 @@
+;PRO ctest, file
+;
+;  this is just a quick program to calculate the cloud mask
+;  and show clouds and band 1
+;
+openr,1,"~/ctest.file"
+file = ""
+readf,1, file
+close,1
+print, "FILE = ",file
+
+
+tfile="~/idl/bin/avhrr/clavrdir/tg96.dat"
+
+data = imgread3(file, 512,512,10, /i2)
+datau = avhrrunscale(data, /i2, /ref)
+jd = file2jul(file, year=1996)
+clavr, datau, clouds, jd, tfile=tfile
+
+showimg, clouds(*,*,0), 0
+showimg, alog(data(*,*,0)), 1
+
+
+notcloud = where(clouds(*,*,0) eq 0)
+cmask = mask(clouds(*,*,0), notcloud, /show)
+t4 = datau(*,*,3)
+nd = datau(*,*,5)
+
+idx = uniqpair(t4, nd)
+
+window,2
+plot, t4(idx), nd(idx), psym=3
+
+oplot, t4*cmask, nd*cmask, psym=3, color=rgb(0,255,0)
+end

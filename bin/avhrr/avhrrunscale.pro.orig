@@ -1,0 +1,51 @@
+FUNCTION   avhrrunscale, data, BYTE = byte, I2 = i2, RAD=rad, REF=ref
+
+;
+;  This Function unscales AVHRR data from its BYTE or 10BIT
+;  form to physical units.
+;
+;  The default is 10BIT, but BYTE can be specified by
+;  using the BYTE keyword.
+;
+;  The equation used for unscaling is:
+;
+;     actual = (scaled-offset)/scale
+;
+
+if (KEYWORD_SET(BYTE)) then  begin
+  @us_byte.h 
+endif else begin
+  @avhrr_10bit.h
+endelse
+
+if (KEYWORD_SET(RAD)) then begin
+  rscl = radscl
+  roff = radoff
+endif else if(KEYWORD_SET(REF)) then begin
+  rscl = refscl
+  roff = refoff
+endif
+
+ns = n_elements(data(*,0))
+nl = n_elements(data(0,*))
+
+actual = fltarr(ns, nl)
+
+putband, actual, 0, (getband(data, 0,ns) - roff)/rscl, ns         ; Band 1
+putband, actual, 1, (getband(data, 1,ns) - roff)/rscl, ns         ; Band 2
+putband, actual, 2, (getband(data, 2,ns) - toff)/tscl, ns         ; Band 3
+putband, actual, 3, (getband(data, 3,ns) - toff)/tscl, ns         ; Band 4
+putband, actual, 4, (getband(data, 4,ns) - toff)/tscl, ns         ; Band 5
+putband, actual, 5, (getband(data, 5,ns) - noff)/nscl, ns         ; NDVI 
+putband, actual, 6, (getband(data, 6,ns) - satzoff)/satzscl, ns   ; SatZen
+putband, actual, 7, (getband(data, 7,ns) - solzoff)/solzscl, ns   ; SolZen
+putband, actual, 8, (getband(data, 8,ns) - RelAzoff)/RelAzscl, ns ; |RelAz|
+putband, actual, 9,  getband(data, 9,ns), ns                      ; Date
+
+if(nl/ns gt 10) then begin
+  putband, actual,10,  getband(data,10,ns), ns                      ;
+  putband, actual,11,  getband(data,11,ns), ns                      ; Cloud
+endif
+
+return, actual
+end

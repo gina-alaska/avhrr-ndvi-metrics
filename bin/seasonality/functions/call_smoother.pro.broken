@@ -1,0 +1,82 @@
+FUNCTION call_smoother, info, x, y
+
+smoother_path='/edcsnw54/home/suarezm/gi/Smoother/bin/'
+;smoother_path='/edcsnw54/home/suarezm/gi/Smoother/newbin/'
+infile='/tmp/Smoother/pixel'
+
+        ;define image array based on data type inputted
+        if (info.dt eq 2) then begin
+                type = info.dt
+                smoother='asciiout'
+        endif else begin
+                type = info.dt
+                smoother='asciioutbyte'
+;smoother='smooth'
+        endelse
+
+        ;read smooth parameters
+         pp=info.mSmoothParam.pp
+         ps=info.mSmoothParam.ps
+         swin=info.mSmoothParam.swin
+         rwin=info.mSmoothParam.rwin
+         cwin=info.mSmoothParam.cwin
+         pwght=info.mSmoothParam.pwght
+         swght=info.mSmoothParam.swght
+         vwght=info.mSmoothParam.vwght
+         minval=info.mSmoothParam.minval
+         maxval=info.mSmoothParam.maxval
+
+;infile='/edcsnw54/home/suarezm/gi/bsuperior.img'
+;rows=64
+;cols=64
+;bands=156
+        smth_str = smoother_path+smoother+$
+                ' -i '    +infile+$
+                ' -data ' +strcompress(type)+$
+                ' -bands '+strcompress(info.nb)+$
+                ' -rows 1 -cols 1 '+$
+;                ' -rows '+strcompress(rows)+$
+;                ' -cols '+strcompress(cols)+$
+;                ' -bands '+strcompress(bands)+$
+                ' -pp '   +strcompress(pp)+$
+                ' -peaks '+strcompress(ps)+$
+                ' -wr '   +strcompress(rwin)+$
+                ' -s '+strcompress(swin)+$
+                ' -wc '   +strcompress(cwin)+$
+                ' -wp '+strcompress(pwght)+$
+                ' -ws '   +strcompress(swght)+$
+                ' -wv '+strcompress(vwght);+$
+
+;                ' -ascii '+$ ;MJS 4/16/98
+;                ' -min '+strcompress(minval)+$
+;                ' -max 200';+200;+strcompress(maxval)
+;if (info.dt EQ 1) then smth_str=smth_str+' -byte'
+
+print, smth_str
+
+        spawn,smth_str,smth_data
+CASE (info.dt) OF
+   1: BEGIN
+help, smth_data
+
+;print, byte(fix(smth_data))
+;         ismth_data = byte(fix(smth_data))
+         ismth_data = byte((smth_data))
+
+print, transpose(ismth_data)
+help, ismth_data
+   END
+   2: BEGIN
+         ismth_data = fix(smth_data)
+;print, ismth_data
+;help, ismth_data
+   END
+   ELSE:
+ENDCASE
+
+;openw,lun,"tmp.byte",/get_lun
+;for i = 0, 431 do printf, lun, info.image(x-1,y-1,i), ismth_data(i)
+;free_lun, lun
+
+return, ismth_data
+end
