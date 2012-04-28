@@ -13,7 +13,7 @@
 
 ;jzhu, 4/24/2012, modified from modis ndvi metrics calculation program "smooth_calculate_metrics_tile_ver9.pro"
 
-pro avhrr_calculate_ndvi_metrics_tile,filen,flg
+pro avhrr_calculate_ndvi_metrics_tile,filen,filen_sm, flg
 
 ;flg (indicate if the program run successful, 0--successful, 1--not successful)
 ;filen-- one-year-stacked and smoothed avhrr file
@@ -21,9 +21,9 @@ pro avhrr_calculate_ndvi_metrics_tile,filen,flg
 
 ;test only, for simplisity
 
-filen_sm='/mnt/jzhu_scratch/nps-cesu/avhrr/ak_nd_1982sm'
+;filen_sm='/mnt/jzhu_scratch/nps-cesu/avhrr/ak_nd_1982sm'
 
-filen = '/mnt/jzhu_scratch/nps-cesu/avhrr/ak_nd_1982'
+;filen = '/mnt/jzhu_scratch/nps-cesu/avhrr/ak_nd_1982'
 
 
 ;---make sure the program can work in both windows and linux.
