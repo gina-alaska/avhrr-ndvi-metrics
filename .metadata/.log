@@ -106,3 +106,101 @@ org.eclipse.core.commands.common.NotDefinedException: Cannot get the parent iden
 	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:443)
 	at org.eclipse.equinox.launcher.Main.run(Main.java:1169)
 	at org.eclipse.equinox.launcher.Main.main(Main.java:1144)
+!SESSION 2013-03-05 10:16:45.390 -----------------------------------------------
+eclipse.buildId=unknown
+java.version=1.5.0_11
+java.vendor=Sun Microsystems Inc.
+BootLoader constants: OS=linux, ARCH=x86, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86
+
+!ENTRY org.eclipse.jface 4 0 2013-03-05 11:15:21.916
+!MESSAGE Undefined context while filtering dialog/window contexts
+!STACK 0
+org.eclipse.core.commands.common.NotDefinedException: Cannot get the parent identifier from an undefined context. org.eclipse.debug.ui.BreakpointView
+	at org.eclipse.core.commands.contexts.Context.getParentId(Context.java:201)
+	at org.eclipse.jface.bindings.BindingManager.createFilteredContextTreeFor(BindingManager.java:825)
+	at org.eclipse.jface.bindings.BindingManager.recomputeBindings(BindingManager.java:1720)
+	at org.eclipse.jface.bindings.BindingManager.contextManagerChanged(BindingManager.java:689)
+	at org.eclipse.core.commands.contexts.ContextManager.fireContextManagerChanged(ContextManager.java:152)
+	at org.eclipse.core.commands.contexts.ContextManager.addActiveContext(ContextManager.java:96)
+	at org.eclipse.ui.internal.contexts.ContextAuthority.updateContext(ContextAuthority.java:758)
+	at org.eclipse.ui.internal.contexts.ContextAuthority.activateContext(ContextAuthority.java:175)
+	at org.eclipse.ui.internal.contexts.ContextService.activateContext(ContextService.java:88)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.doActivateContext(SlaveContextService.java:279)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.activateContext(SlaveContextService.java:164)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.activateContext(SlaveContextService.java:133)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.doActivateContext(SlaveContextService.java:279)
+	at org.eclipse.ui.internal.contexts.SlaveContextService.activateContext(SlaveContextService.java:122)
+	at org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView.partActivated(BreakpointsView.java:768)
+	at org.eclipse.ui.internal.PartListenerList$1.run(PartListenerList.java:72)
+	at org.eclipse.core.runtime.SafeRunner.run(SafeRunner.java:37)
+	at org.eclipse.core.runtime.Platform.run(Platform.java:857)
+	at org.eclipse.ui.internal.PartListenerList.fireEvent(PartListenerList.java:57)
+	at org.eclipse.ui.internal.PartListenerList.firePartActivated(PartListenerList.java:70)
+	at org.eclipse.ui.internal.PartService.firePartActivated(PartService.java:73)
+	at org.eclipse.ui.internal.PartService.setActivePart(PartService.java:171)
+	at org.eclipse.ui.internal.WorkbenchPagePartList.fireActivePartChanged(WorkbenchPagePartList.java:56)
+	at org.eclipse.ui.internal.PartList.setActivePart(PartList.java:126)
+	at org.eclipse.ui.internal.WorkbenchPage.setActivePart(WorkbenchPage.java:3384)
+	at org.eclipse.ui.internal.WorkbenchPage.requestActivation(WorkbenchPage.java:2928)
+	at org.eclipse.ui.internal.PartPane.requestActivation(PartPane.java:265)
+	at org.eclipse.ui.internal.PartPane.handleEvent(PartPane.java:229)
+	at org.eclipse.swt.widgets.EventTable.sendEvent(EventTable.java:66)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1101)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1125)
+	at org.eclipse.swt.widgets.Widget.sendEvent(Widget.java:1106)
+	at org.eclipse.swt.widgets.Shell.setActiveControl(Shell.java:1142)
+	at org.eclipse.swt.widgets.Control.gtk_button_press_event(Control.java:2353)
+	at org.eclipse.swt.widgets.Composite.gtk_button_press_event(Composite.java:627)
+	at org.eclipse.swt.widgets.ToolItem.gtk_button_press_event(ToolItem.java:481)
+	at org.eclipse.swt.widgets.Widget.windowProc(Widget.java:1474)
+	at org.eclipse.swt.widgets.Display.windowProc(Display.java:3973)
+	at org.eclipse.swt.internal.gtk.OS._gtk_main_do_event(Native Method)
+	at org.eclipse.swt.internal.gtk.OS.gtk_main_do_event(OS.java:5593)
+	at org.eclipse.swt.widgets.Display.eventProc(Display.java:1192)
+	at org.eclipse.swt.internal.gtk.OS._g_main_context_iteration(Native Method)
+	at org.eclipse.swt.internal.gtk.OS.g_main_context_iteration(OS.java:1487)
+	at org.eclipse.swt.widgets.Display.readAndDispatch(Display.java:2969)
+	at org.eclipse.ui.internal.Workbench.runEventLoop(Workbench.java:2389)
+	at org.eclipse.ui.internal.Workbench.runUI(Workbench.java:2353)
+	at org.eclipse.ui.internal.Workbench.access$4(Workbench.java:2219)
+	at org.eclipse.ui.internal.Workbench$4.run(Workbench.java:466)
+	at org.eclipse.core.databinding.observable.Realm.runWithDefault(Realm.java:289)
+	at org.eclipse.ui.internal.Workbench.createAndRunWorkbench(Workbench.java:461)
+	at org.eclipse.ui.PlatformUI.createAndRunWorkbench(PlatformUI.java:149)
+	at org.eclipse.ui.internal.ide.application.IDEApplication.start(IDEApplication.java:106)
+	at org.eclipse.equinox.internal.app.EclipseAppHandle.run(EclipseAppHandle.java:153)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.runApplication(EclipseAppLauncher.java:106)
+	at org.eclipse.core.runtime.internal.adaptor.EclipseAppLauncher.start(EclipseAppLauncher.java:76)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:363)
+	at org.eclipse.core.runtime.adaptor.EclipseStarter.run(EclipseStarter.java:176)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:39)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:25)
+	at java.lang.reflect.Method.invoke(Method.java:585)
+	at org.eclipse.equinox.launcher.Main.invokeFramework(Main.java:504)
+	at org.eclipse.equinox.launcher.Main.basicRun(Main.java:443)
+	at org.eclipse.equinox.launcher.Main.run(Main.java:1169)
+	at org.eclipse.equinox.launcher.Main.main(Main.java:1144)
+
+!ENTRY org.eclipse.ui.ide 4 4 2013-03-05 13:39:22.094
+!MESSAGE Marker id 92 not found.
+
+!ENTRY org.eclipse.ui.ide 4 4 2013-03-05 13:39:22.126
+!MESSAGE Marker id 92 not found.
+!STACK 1
+org.eclipse.core.internal.resources.ResourceException: Marker id 92 not found.
+	at org.eclipse.core.internal.resources.Marker.checkInfo(Marker.java:56)
+	at org.eclipse.core.internal.resources.Marker.getAttribute(Marker.java:97)
+	at org.eclipse.ui.views.markers.internal.FieldMarkerGroup$AttributeMapping.testAttribute(FieldMarkerGroup.java:108)
+	at org.eclipse.ui.views.markers.internal.FieldMarkerGroup.findGroupValue(FieldMarkerGroup.java:221)
+	at org.eclipse.ui.views.markers.internal.FieldMarkerGroup.getMapping(FieldMarkerGroup.java:200)
+	at org.eclipse.ui.views.markers.internal.FieldMarkerGroup.getValue(FieldMarkerGroup.java:185)
+	at org.eclipse.ui.views.markers.internal.MarkerAdapter.getNameForIndex(MarkerAdapter.java:374)
+	at org.eclipse.ui.views.markers.internal.MarkerAdapter.buildHierarchy(MarkerAdapter.java:352)
+	at org.eclipse.ui.views.markers.internal.MarkerAdapter.buildAllMarkers(MarkerAdapter.java:278)
+	at org.eclipse.ui.views.markers.internal.MarkerView.updateForContentsRefresh(MarkerView.java:561)
+	at org.eclipse.ui.views.markers.internal.MarkerView$MarkerProcessJob.run(MarkerView.java:151)
+	at org.eclipse.core.internal.jobs.Worker.run(Worker.java:55)
+!SUBENTRY 1 org.eclipse.core.resources 4 376 2013-03-05 13:39:22.126
+!MESSAGE Marker id 92 not found.

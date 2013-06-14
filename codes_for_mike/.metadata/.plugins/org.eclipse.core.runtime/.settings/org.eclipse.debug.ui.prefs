@@ -1,0 +1,5 @@
+#Tue Mar 05 10:16:42 AKST 2013
+eclipse.preferences.version=1
+preferredDetailPanes=DefaultDetailPane\:DefaultDetailPane|
+org.eclipse.debug.ui.PREF_LAUNCH_PERSPECTIVES=<?xml version\="1.0" encoding\="UTF-8"?>\n<launchPerspectives/>\n
+org.eclipse.debug.ui.user_view_bindings=<?xml version\="1.0" encoding\="UTF-8"?>\n<viewBindings>\n<view id\="org.eclipse.debug.ui.DebugView">\n<perspective id\="com.rsi.idldt.ui.IDLPerspective" userAction\="closed"/>\n</view>\n</viewBindings>\n

@@ -1,0 +1,9 @@
+1. 2012/10, jzhu
+per Mike Budde's request, modify modis NDVI metrics algorithm into avhrr ndvi metrics algorithm named as avhrr_calculate_ndvi_metrics_by_raw_plus_smooth.pro. It take raw data time series (for example ak_nd_1998, ak_nd_1998.hdr) and smoothed time series (ak_nd_1998sm and ak_nd_1998sm.hdr). The smoothed time series is produced by swets smooth method. Swets smooth method includes two parameters, one is the regression window (-wr) which identifies the number of points to include the linear regression calculated a each point, and the other is the combination window (-wc) which identifies the number of regression lines to combine (average) for a smoothed data point. In the case of the AVHRR data that Mike have been working with, he have used a -wr of 5 and a -wc of 6.
+
+2. 2013/03,jzhu
+
+develop avhrr ndvi algorithm named as avhrr_calculate_ndvi_metrics_by_raw.pro. It takes raw data time series (example ak_nd_1998sm and ak_nd_1998sm.hdr) only as input. uses modified swets smooth method to produce smoothed time series. then calcualte the NDVI metrics.
+
+investigate how smooth method with different window parameters affect the NDVI metrics results. 
+

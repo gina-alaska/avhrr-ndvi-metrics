@@ -1,0 +1,54 @@
+A.In order to do a better job in calculation ndvi metrics, several methods are tested.
+
+1. compare three-year data to one-year data, do not extension the data into a complete year (52 points per year)
+
+found the results are almost the same.
+
+2. compare one-year data,one with extension into a complete year, another do not do extension, found 1yr-noext is better than 1yr-ext
+
+3. one-year data with extension into a complete year,  change forward and backward moving window, one with fixed window range 28 and 30, another is automatically determine the moving window, but the forward window is limited in 25 to 40, and backward window is forward window +2.fixed window produces more no data pixels, smaller start season( around 3 days), greather end of season days( around 3 days). so the one with dynamic window is better.
+
+
+B. conditions to calculate the metrics
+
+1. check the vector of each pixel(before interpolate any points) , the number of valid points (defined as not fill, bad, snow, cloud, water, negative reflectance pixel) is 30% of total point of the vector, calculate metrics
+
+2. check ndvi, if the maximun ndvi is greater or equal to metrics_cal_threshold=0.4, calculate metrics
+
+
+B. programs to do all kinds of calculation
+
+1. one-year-extension-auto-wl
+
+   time_series_process_nps_oneyear.pro->interpol_extension_1y_vector, user_metrics_nps->determine_wl
+
+2. one-year-extension-fix-wl
+
+  time_series_process_nps_oneyear.pro->interpol_extension_1y_vector, user_metrics_nps (fix setting wl=[28,30])
+
+3.one-year-noextension
+
+  time_series_process_nps_oneyear.pro->interpol_noextension_1y_vector 
+
+4. three-year extension
+
+time_series_process_nps.pro->interpol_extension_vector
+
+5. three-year-noextension
+
+time_series_process_nps.pro->interpol_noextension_vector
+
+
+
+
+interpol_extension_vector.pro, extend each year to 365 days, then join the three year data.
+interpol_extension_vector2.pro, interpolate missiing days between mid-year and after mid-year, then interpolate this vector.
+interpol_extension_vector3.pro, do not interpolate missing day, but use three-year vector to evaluate SOS and EOS.
+user_metrics_nps.pro uses mid-year vector to evaluate metrics
+
+user_metrics_nps_v2.pro calls computemetrics2.pro to get metrics.
+
+
+computemetrics3.pro use three-year vector to determind SOS and EOS.
+computemetrics2.pro use slope method to determind EOS from Ends.
+computemetrics.pro use minimum ndvi to determind EOS among Ends. 
