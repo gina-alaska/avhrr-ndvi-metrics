@@ -1,9 +1,67 @@
-1. 2012/10, jzhu
-per Mike Budde's request, modify modis NDVI metrics algorithm into avhrr ndvi metrics algorithm named as avhrr_calculate_ndvi_metrics_by_raw_plus_smooth.pro. It take raw data time series (for example ak_nd_1998, ak_nd_1998.hdr) and smoothed time series (ak_nd_1998sm and ak_nd_1998sm.hdr). The smoothed time series is produced by swets smooth method. Swets smooth method includes two parameters, one is the regression window (-wr) which identifies the number of points to include the linear regression calculated a each point, and the other is the combination window (-wc) which identifies the number of regression lines to combine (average) for a smoothed data point. In the case of the AVHRR data that Mike have been working with, he have used a -wr of 5 and a -wc of 6.
+avhrr 7 day composite NDVI data are obtained by http://earthexplorer.usgs.gov/.
 
-2. 2013/03,jzhu
+2013/7/2, verson 1
 
-develop avhrr ndvi algorithm named as avhrr_calculate_ndvi_metrics_by_raw.pro. It takes raw data time series (example ak_nd_1998sm and ak_nd_1998sm.hdr) only as input. uses modified swets smooth method to produce smoothed time series. then calcualte the NDVI metrics.
+assume that average green season 12*7=84 days long, we pick the wl=[num-12, num-12]. uses v20=0.2*maximun NDVI as threshold line.
 
-investigate how smooth method with different window parameters affect the NDVI metrics results. 
+Both avhrr version 1 and eMODIS algorithms use following way to determine the sos and eos threshold point (x20,y20): when no 20% crossover line, set x20=0 and y20=ndvi(0) for sos threshold,and set x20=num-1 and y20=ndvi(num-1) for eos threshold. Almost every eMODIS time series has 20% crossover points, so threshold points (x20,y20) for both sos and eos exist. While some AVHRR time series do not have 20% percentage crossover points, so we have manually assime threshold point for SOS (x20=0, y20=ndvi(0)) and eos threshold point as x20=num-1, y20=ndvi(num-1)). As a result, some time series have the last point as EOS or the first point as SOS. 
+
+2013/7/8, version 2
+
+same as version 1, except v20=20%*(maximun ndvi-minimum ndvi).
+
+compare version 2 and version 1, they are almost the same.
+
+2013/7/9,version 3
+
+I think interpolate need change, we no not need separate time series into three periods, then uses different stratagy to interpolate. instead, use one method to interpolate missing data points.
+
+I found the error in the cutoff_interp.pro, where the definition of valid data is wrong. It thinks the ndvi with 100 is bad data but it is actually good data, fix this problem and also uses only one way to interpolate the time series.
+
+2013/7/11, version 4
+
+modify from version 3. 
+cutoff_interp_v4.pro: uses 3-period interpolation.
+interpol_line100v_v4.pro:linear interpolate middle, external expend by random 100 to 101 if possible.wl=[num_band-12,num_band-12].
+
+
+send version 4 result to AMY to review.
+
+
+
+
+2013/8/14, version 4 try2
+
+Amy checked found that Maximum day estimated by modis and avhrr are different, I modify the findday.pro,which locates the first day of a week as the day, now I change findday.pro into middle day of the week as the day estimateion.
+
+
+
+I found there are some pixels that the last day have the maximum NDVI value. In this case, the Maximum day estimation are not correct. I add the new condition to restrict the good time series as the maximum day must between 20% of maximum NDVI value period-2. That is maximum day must be start of 20% of maximum ndvi day +2 and end of 20% of maximum ndvi day-2.
+
+2013/8/16,
+
+use ArcGIS to analysis maximum NDVI between emodis and avhrr for kennai. found emodis has narrow histogram distribution, and avhrr histogram distrubution is very wide. I think avhrr maximum day is not correct. I uses raw_NDVI to estimate maximun day for both emodis and avhrr. When compare avhrr and emodis maximim day, they have different pixel resolution, I pick emodis pixel which is right under the middle of avhrr pixel.I need try average emodis, then compare. I did the avhrr to compare averaged emodis comparision. Comparision of the pixels-averaged-against-avhrr-pixel emodis maximum day with avhrr shows the similar result as previous comparision.
+
+I should try to use smooth-time series to estimate the Maximum day.   
+
+
+2013/8/14, version 5
+ 
+modify from version 4 try 2, difference 1 is we use smooth-time series to calcualte maximum ndvi days, whease in version 4 try 2, we use raw-time series to calcualte maximum ndvi days.
+
+check results:use smoothed time series to calcuate maximum NDVI days producing the similar result as using raw time series to estimate maximum NDVI days.
+
+2013/8/19, version 6
+
+modify smooth algorithm from version 5. completely realizes Daniel L. Sweets method. Pevious version Swets method (in version 5 and before) only realizes how to calcualte weighted least-square approch, not realize use chi-square to eliminate outliers, not realize multile regression lines average. only use one time regression line.
+
+uses ArcGIS to compare the maximum NDVI days estimation at Kennai and Denali by AVHRR and eMODIS. I got similar results, that is: SOS days estimation from eMODIS and AVHRR have good linear relationship. But maximum NDVI day estimation at Kennail and Denali from eMODIS and AVHRR do not have relationship. It is almost the same as in version 5.
+
+9/23/2013, 
+talked with Amy and Parker, we agreed that we do not have beeter method to make AVHRR result look like emodis result as for maximum NDVI days. We think the solid difference between these two datasets can not be overcome. So we decide to go ahead to process the whole stack of AVHRR from 1995 to now by version 5.
+
+12/4/2013,
+found there are improvement space for version 5. copy version 5 into version 7 (cp -r codes_v5 codes_v7).
+do some modify for cutoff_interp_v4.pro. do not limit interpolate points between 20% of maximun start and end points, 
+
 

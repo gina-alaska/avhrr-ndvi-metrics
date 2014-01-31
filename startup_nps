@@ -1,0 +1,4 @@
+ENVI, /RESTORE_BASE_SAVE_FILES
+PREF_SET, 'IDL_PATH', '<IDL_DEFAULT>;+C:\Users\jiang\Documents\work\nps\avhrr_usgs_ndvi', /COMMIT
+
+

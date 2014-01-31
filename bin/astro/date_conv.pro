@@ -76,7 +76,9 @@ function date_conv,date,type
 ;-
 ;-------------------------------------------------------------
 ;
-compile_opt idl2
+;jzhu, 5/9, 2012, comment out this line to say it it works, ILD 8.1 can not work with this routine 
+;compile_opt idl2
+
 ; data declaration
 ;
 days = [0,31,28,31,30,31,30,31,31,30,31,30,31]
