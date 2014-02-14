@@ -5,7 +5,7 @@
 if [ $# != 2 ]; then 
 
 echo
-echo "this script take one parameter: raw data directory"
+echo "this script take two parameter: raw data main directory, year "
 echo
 exit 1
 
