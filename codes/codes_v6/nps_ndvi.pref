@@ -1,5 +1,0 @@
-#set preference for nps_ndvi application
-IDL_STARTUP : '/home/jiang/nps/cesu/modis_ndvi_250m/idlprog/startup_nps_ndvi.pro'
-#modify prefences in starup_nps_ndvi.bat
-#
-#IDL_PATH : '<IDL_DEFAULT>:/home/jiang/nps/cesu/modis_ndvi_250m/wrkdir/ndvi_npscode'
