@@ -1,0 +1,86 @@
+calculation method for ndvi metrics are as following:
+
+
+description of directoryies:
+
+a.home directory: ~/nps/cesu/modis_ndvi_250m
+
+b.script: ~/nps/cesu/modis_ndvi_250m/script
+    
+     bash shell programs
+
+c.workdirectory: ~/nps/cesu/modis_ndvi_250m/wrkdir 
+
+    unziped data files, immediate data files, result data files
+
+d.idl program directory: ~/nps/cesu/modis_ndvi_250m/wrkdir/ndvi_nps
+   
+   
+e.raw unzip ndvi data directory: ~/nps/cesu/modis_ndvi_250m/TERRA
+
+
+procedure of data process: 
+
+
+0. unzip the ndvi files (~nps/cesu/script)
+ 
+  ndvi files comes from EMODIS website. download them. They are zip files,
+
+  scripts to unzip them and rename them are: 
+
+  unzip_ndvi.bash
+
+  rename_ndvi.bash
+
+
+
+1. stack and subset monthly data files of one year inot one-year data
+     
+ inputs: file list of monthly ndvi file of one year,
+         file list of monthly ndvi_bq files of the same year
+ 
+   oneyear_data_layer_subset_good.pro
+   
+   subroutines:start_batch.pro,read_ndvi.pro,subset.pro
+
+ outputs: one-year stacked,subseted, and good data file       
+ 
+2. stack multiple year of one-year data into a multiple-year(three years) data
+  
+   inputs: file list of one-year good data files, normally three sequency years  
+   
+   layer_stack.pro
+     
+   subroutines: start_batch.pro
+  
+   outputs:a multiple year (normally 3 years) stacked data file named: multiyear_layer_stack
+
+3. calculate one-year metrics
+  
+   inputs: a multiple-year data file
+  
+   process: smooth_calculate_metrics_tile.pro
+          
+            subroutines: start_batch.pro, user_smooth.pro, interpol_vector.pro, oneyear_extension.pro,cutoff_interp.pro,
+            filter_odd.pro,user_metrics.pro 
+
+   outputs: a metrics data file and smoothed data file
+
+
+
+
+list of pro files 
+
+calculate_ndvi_metrics.pro
+interpol_vector.pro
+layer_stack.pro
+oneyear_data_layer_subset_good.pro
+oneyear_extension.pro
+oneyear_main_yyyy.pro
+read_ndvi.pro
+smooth_calculate_metrics_tile.pro
+start_batch.pro
+subset.pro
+user_metrics.pro
+user_smooth.pro
+;--------------------------------------------------------------

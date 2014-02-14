@@ -62,6 +62,6 @@ talked with Amy and Parker, we agreed that we do not have beeter method to make 
 
 12/4/2013,
 found there are improvement space for version 5. copy version 5 into version 7 (cp -r codes_v5 codes_v7).
-do some modify for cutoff_interp_v4.pro. do not limit interpolate points between 20% of maximun start and end points, 
+do some modify for cutoff_interp_v4.pro. do not limit interpolate points between 20% of maximun start and end points. Find the result is almost the same as version 5. So we stick on version 5.
 
 

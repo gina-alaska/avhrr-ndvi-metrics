@@ -1,3 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">&#x0A;<refactoring comment="Delete resource &apos;Default/Default&apos;" deleteContents="false" description="Delete resource &apos;Default/Default&apos;" element1="/Default/Default" flags="7" id="org.eclipse.ltk.core.refactoring.delete.resources" resources="1" stamp="1355425618554"/>&#x0A;<refactoring comment="Rename resource &apos;Default&apos; to &apos;avhrr-metrics&apos;" description="Rename resource &apos;Default&apos;" flags="7" id="org.eclipse.ltk.core.refactoring.rename.resource" input="/Default" name="avhrr-metrics" stamp="1355425644543" updateReferences="true"/>
-</session>

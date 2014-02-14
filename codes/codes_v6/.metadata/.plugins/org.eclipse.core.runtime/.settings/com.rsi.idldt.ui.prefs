@@ -1,0 +1,14 @@
+#Mon Aug 19 12:09:32 AKDT 2013
+coolItemsOrder=org.eclipse.ui.workbench.file\:com.rsi.idldt.ui.textedit.toolbar\:com.rsi.idldt.ui.toolbar.debugTools
+IDL_DEVICE=X
+IDL_VALUES=true
+CHROMACODING_VALUES=true
+IDL_DATAFILE_USER_COMMENTS=1
+IDLDT_VALUES=true
+IDL_STARTUP=/import/u/u1/uaf/jzhu/nps/cesu/startup_nps.pro
+IDL_RBUF_PERSIST=1
+IDL_QUIET=0
+IDL_PATH=<IDL_DEFAULT>\:+/u1/uaf/jzhu/nps/cesu/bin
+eclipse.preferences.version=1
+IDL_CPU_VECTOR_ENABLE=1
+IDL_PATH_CACHE_DISABLE=1
