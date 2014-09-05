@@ -58,10 +58,10 @@ modify smooth algorithm from version 5. completely realizes Daniel L. Sweets met
 uses ArcGIS to compare the maximum NDVI days estimation at Kennai and Denali by AVHRR and eMODIS. I got similar results, that is: SOS days estimation from eMODIS and AVHRR have good linear relationship. But maximum NDVI day estimation at Kennail and Denali from eMODIS and AVHRR do not have relationship. It is almost the same as in version 5.
 
 9/23/2013, 
-talked with Amy and Parker, we agreed that we do not have beeter method to make AVHRR result look like emodis result as for maximum NDVI days. We think the solid difference between these two datasets can not be overcome. So we decide to go ahead to process the whole stack of AVHRR from 1995 to now by version 5.
+talked with Amy and Parker, we agreed that we do not have better method to make AVHRR result look like emodis result as for maximum NDVI days. We think the solid difference between these two datasets can not be overcome. So we decide to go ahead to process the whole stack of AVHRR from 1995 to now by version 5.
 
 12/4/2013,
 found there are improvement space for version 5. copy version 5 into version 7 (cp -r codes_v5 codes_v7).
-do some modify for cutoff_interp_v4.pro. do not limit interpolate points between 20% of maximun start and end points. Find the result is almost the same as version 5. So we stick on version 5.
+do some modify for cutoff_interp_v4.pro. do not limit interpolate points between 20% of maximun start and end points. Find the result is almost the same as version 5. So we stick on version 5. That means version 5 is the final version.
 
 
