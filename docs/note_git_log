@@ -1,0 +1,10 @@
+copy avhrr_ndvi_metrcis from jiang@jzhu.gina.alaska.edu
+
+scp -p -r ./avhrr_ndvi_metrics jzhu4@panda:/home/jzhu4/projects/nps
+
+
+git add .
+git commit -m "avhrr_ndvi_metrics, 1025/7/8"
+git push
+
+
